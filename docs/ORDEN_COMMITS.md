@@ -18,6 +18,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 8 | 2026-11-01 | `feat: agregar inventario de equipos con CRUD, filtros, baja y cambio de estado` | Se agrega módulo de equipos completo para admin |
 | 9 | 2026-11-01 | `docs: actualizar orden y estado con inventario` | Se actualiza seguimiento con inventario |
 | 10 | 2026-11-01 | `feat: agregar modulo de solicitudes para solicitante` | Solicitar, listar, ver detalle, cancelar pendiente |
+| 11 | 2026-11-01 | `docs: actualizar seguimiento con solicitudes` | Se actualiza estado de backend/frontend |
 
 
 ## Pendientes por hacer
