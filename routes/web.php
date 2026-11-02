@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DespachoController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\OficinaController;
 use App\Http\Controllers\ProfileController;
@@ -84,6 +85,19 @@ Route::middleware(['auth', 'role:solicitante'])->prefix('solicitudes')->name('so
     Route::post('/', [SolicitudController::class, 'store'])->name('store');
     Route::get('/{solicitud}', [SolicitudController::class, 'show'])->name('show');
     Route::post('/{solicitud}/cancelar', [SolicitudController::class, 'cancelar'])->name('cancelar');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Módulo 6 — Aprobación y despacho (Admin)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->prefix('admin/solicitudes')->name('admin.solicitudes.')->group(function () {
+    Route::get('/', [DespachoController::class, 'index'])->name('index');
+    Route::get('/{solicitud}/aprobar', [DespachoController::class, 'formAprobar'])->name('form');
+    Route::post('/{solicitud}/aprobar', [DespachoController::class, 'aprobar'])->name('aprobar');
+    Route::get('/{solicitud}/rechazar', [DespachoController::class, 'formRechazar'])->name('formRechazar');
+    Route::post('/{solicitud}/rechazar', [DespachoController::class, 'rechazar'])->name('rechazar');
 });
 
 require __DIR__.'/auth.php';
