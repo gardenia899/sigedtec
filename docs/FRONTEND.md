@@ -19,7 +19,8 @@ Llevar control de las vistas, componentes, layout y lo que falta por mostrar cor
 | layouts/guest.blade.php | Presente | Layout para auth |
 | dashboard/admin.blade.php | Presente | Revisar que muestre datos reales |
 | dashboard/solicitante.blade.php | Presente | Revisar que muestre datos reales |
-| oficinas/index.blade.php | Presente | Solo listado por ahora |
+| oficinas/index.blade.php | Funcional | Listado, crear, editar, activar/desactivar |
+| categorias/index.blade.php | Funcional | Listado, crear, editar, activar/desactivar |
 | profile/* | Presente | Editar perfil |
 
 ## Componentes
