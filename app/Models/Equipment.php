@@ -19,9 +19,6 @@ class Equipment extends Model
     protected $table = 'equipment';
 
     /**
-     * `status` NO es masignable (SDD §21.5): solo se escribe desde rutas controladas
-     * (alta, edición admin o la transacción de despacho).
-     *
      * @var list<string>
      */
     protected $fillable = [
@@ -34,6 +31,7 @@ class Equipment extends Model
         'ram_gb',
         'storage_gb',
         'storage_type',
+        'status',
         'acquisition_date',
         'observations',
     ];
