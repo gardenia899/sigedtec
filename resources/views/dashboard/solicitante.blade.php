@@ -1,6 +1,14 @@
 <x-app-layout>
     <x-slot name="header">Panel de mi oficina</x-slot>
 
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-lg font-semibold text-slate-800">Mi oficina</h2>
+            <p class="text-sm text-slate-500">{{ auth()->user()->office->name ?? '' }}</p>
+        </div>
+        <a href="{{ route('solicitudes.create') }}" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700">Nueva solicitud</a>
+    </div>
+
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         @foreach ([
             ['titulo' => 'Mis solicitudes pendientes', 'valor' => $pendientes, 'color' => 'text-amber-600'],

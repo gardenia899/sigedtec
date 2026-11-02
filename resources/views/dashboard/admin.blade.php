@@ -1,13 +1,23 @@
 <x-app-layout>
     <x-slot name="header">Panel de Soporte Técnico</x-slot>
 
-    {{-- Indicadores reales de PostgreSQL (SDD §14-M8, RN-22) --}}
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-lg font-semibold text-slate-800">Resumen general</h2>
+            <p class="text-sm text-slate-500">Estado actual del inventario y solicitudes.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('admin.solicitudes.index') }}" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700">Ver solicitudes</a>
+            <a href="{{ route('equipos.create') }}" class="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Nuevo equipo</a>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         @foreach ([
             ['titulo' => 'Equipos disponibles', 'valor' => $disponibles, 'color' => 'text-green-600', 'pista' => 'Listos para despacho'],
             ['titulo' => 'Equipos asignados', 'valor' => $asignados, 'color' => 'text-sky-600', 'pista' => 'En oficinas'],
             ['titulo' => 'En mantenimiento', 'valor' => $mantenimiento, 'color' => 'text-amber-600', 'pista' => 'Fuera de servicio'],
-            ['titulo' => 'Solicitudes pendientes', 'valor' => $pendientes, 'color' => 'text-slate-700', 'pista' => 'Requieren decisión'],
+            ['titulo' => 'Solicitudes pendientes', 'valor' => $pendientes, 'color' => 'text-red-600', 'pista' => 'Requieren decisión'],
         ] as $tarjeta)
             <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
                 <p class="text-xs font-medium uppercase tracking-wide text-slate-500">{{ $tarjeta['titulo'] }}</p>
