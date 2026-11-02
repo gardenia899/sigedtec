@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\OficinaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SolicitudController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -70,6 +71,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('inventario')->name('equipos.'
     Route::delete('/{equipo}', [EquipoController::class, 'destroy'])->name('destroy');
     Route::patch('/{equipo}/restaurar', [EquipoController::class, 'restore'])->name('restore');
     Route::patch('/{equipo}/estado', [EquipoController::class, 'cambiarEstado'])->name('estado');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Módulo 5 — Solicitudes (Solicitante)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:solicitante'])->prefix('solicitudes')->name('solicitudes.')->group(function () {
+    Route::get('/', [SolicitudController::class, 'index'])->name('index');
+    Route::get('/crear', [SolicitudController::class, 'create'])->name('create');
+    Route::post('/', [SolicitudController::class, 'store'])->name('store');
+    Route::get('/{solicitud}', [SolicitudController::class, 'show'])->name('show');
+    Route::post('/{solicitud}/cancelar', [SolicitudController::class, 'cancelar'])->name('cancelar');
 });
 
 require __DIR__.'/auth.php';
