@@ -20,6 +20,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 10 | 2026-11-01 | `feat: agregar modulo de solicitudes para solicitante` | Solicitar, listar, ver detalle, cancelar pendiente |
 | 11 | 2026-11-01 | `docs: actualizar seguimiento con solicitudes` | Se actualiza estado de backend/frontend |
 | 12 | 2026-11-01 | `feat: agregar aprobacion y despacho de solicitudes con transaccion` | Aprobar/rechazar con bloqueo, asignación exacta y bitácora |
+| 13 | 2026-11-01 | `docs: actualizar seguimiento con aprobacion y despacho` | Se actualiza estado de backend/frontend |
 
 
 ## Pendientes por hacer
