@@ -30,6 +30,10 @@ Llevar control de las vistas, componentes, layout y lo que falta por mostrar cor
 | despacho/index.blade.php | Funcional | Bandeja de solicitudes para admin |
 | despacho/aprobar.blade.php | Funcional | Selección de equipos para aprobar |
 | despacho/rechazar.blade.php | Funcional | Rechazar con observación |
+| reportes/inventario.blade.php | Funcional | Reporte de inventario |
+| reportes/solicitudes.blade.php | Funcional | Reporte de solicitudes |
+| reportes/asignaciones.blade.php | Funcional | Historial de asignaciones |
+| reportes/movimientos.blade.php | Funcional | Bitácora de movimientos |
 | profile/* | Presente | Editar perfil |
 
 ## Componentes

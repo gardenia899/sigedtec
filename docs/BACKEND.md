@@ -26,7 +26,7 @@ Este documento tiene como objetivo llevar el control del backend: rutas, control
 | Solicitudes | Funcional | Crear, listar propias, ver detalle, cancelar pendiente. |
 | Aprobación/Despacho | Funcional | Bandeja, aprobar con selección de equipos, bloqueo, transacción, rechazar con observación. |
 | Dashboard | Parcial | Existe controlador con lógica por rol, pero hay que revisar vistas y datos. |
-| Reportes | Sin iniciar | Falta inventario, solicitudes por estado, asignaciones por oficina, movimientos. |
+| Reportes | Funcional | Inventario, solicitudes, asignaciones, movimientos con filtros. |
 
 ## Rutas activas ahora mismo
 
