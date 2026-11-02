@@ -24,6 +24,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 14 | 2026-11-01 | `feat: agregar reportes basicos para admin` | Inventario, solicitudes, asignaciones y movimientos |
 | 15 | 2026-11-01 | `docs: actualizar seguimiento con reportes` | Se actualiza estado de backend/frontend |
 | 16 | 2026-11-01 | `feat: actualizar menu segun rol para acceder a todos los modulos` | Se agregan accesos directos al menú |
+| 17 | 2026-11-02 | `feat: mejorar dashboard con acciones rapidas` | Se agregan accesos directos en dashboard |
 
 
 ## Pendientes por hacer
