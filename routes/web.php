@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OficinaController;
 use App\Http\Controllers\ProfileController;
@@ -38,6 +39,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('oficinas')->name('oficinas.')
     Route::get('/{office}/editar', [OficinaController::class, 'edit'])->name('edit');
     Route::put('/{office}', [OficinaController::class, 'update'])->name('update');
     Route::patch('/{office}/activar-desactivar', [OficinaController::class, 'toggle'])->name('toggle');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Módulo 3 — Categorías (solo Soporte Técnico)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->prefix('categorias')->name('categorias.')->group(function () {
+    Route::get('/', [CategoriaController::class, 'index'])->name('index');
+    Route::get('/crear', [CategoriaController::class, 'create'])->name('create');
+    Route::post('/', [CategoriaController::class, 'store'])->name('store');
+    Route::get('/{categoria}/editar', [CategoriaController::class, 'edit'])->name('edit');
+    Route::put('/{categoria}', [CategoriaController::class, 'update'])->name('update');
+    Route::patch('/{categoria}/activar-desactivar', [CategoriaController::class, 'toggle'])->name('toggle');
 });
 
 require __DIR__.'/auth.php';
