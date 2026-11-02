@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\OficinaController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,22 @@ Route::middleware(['auth', 'role:admin'])->prefix('categorias')->name('categoria
     Route::get('/{categoria}/editar', [CategoriaController::class, 'edit'])->name('edit');
     Route::put('/{categoria}', [CategoriaController::class, 'update'])->name('update');
     Route::patch('/{categoria}/activar-desactivar', [CategoriaController::class, 'toggle'])->name('toggle');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Módulo 4 — Inventario / Equipos (solo Soporte Técnico)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->prefix('inventario')->name('equipos.')->group(function () {
+    Route::get('/', [EquipoController::class, 'index'])->name('index');
+    Route::get('/crear', [EquipoController::class, 'create'])->name('create');
+    Route::post('/', [EquipoController::class, 'store'])->name('store');
+    Route::get('/{equipo}/editar', [EquipoController::class, 'edit'])->name('edit');
+    Route::put('/{equipo}', [EquipoController::class, 'update'])->name('update');
+    Route::delete('/{equipo}', [EquipoController::class, 'destroy'])->name('destroy');
+    Route::patch('/{equipo}/restaurar', [EquipoController::class, 'restore'])->name('restore');
+    Route::patch('/{equipo}/estado', [EquipoController::class, 'cambiarEstado'])->name('estado');
 });
 
 require __DIR__.'/auth.php';
