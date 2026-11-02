@@ -19,6 +19,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 9 | 2026-11-01 | `docs: actualizar orden y estado con inventario` | Se actualiza seguimiento con inventario |
 | 10 | 2026-11-01 | `feat: agregar modulo de solicitudes para solicitante` | Solicitar, listar, ver detalle, cancelar pendiente |
 | 11 | 2026-11-01 | `docs: actualizar seguimiento con solicitudes` | Se actualiza estado de backend/frontend |
+| 12 | 2026-11-01 | `feat: agregar aprobacion y despacho de solicitudes con transaccion` | Aprobar/rechazar con bloqueo, asignación exacta y bitácora |
 
 
 ## Pendientes por hacer

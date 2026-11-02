@@ -27,6 +27,9 @@ Llevar control de las vistas, componentes, layout y lo que falta por mostrar cor
 | solicitudes/index.blade.php | Funcional | Listado de solicitudes del solicitante |
 | solicitudes/create.blade.php | Funcional | Crear solicitud |
 | solicitudes/show.blade.php | Funcional | Detalle con equipos asignados |
+| despacho/index.blade.php | Funcional | Bandeja de solicitudes para admin |
+| despacho/aprobar.blade.php | Funcional | Selección de equipos para aprobar |
+| despacho/rechazar.blade.php | Funcional | Rechazar con observación |
 | profile/* | Presente | Editar perfil |
 
 ## Componentes
