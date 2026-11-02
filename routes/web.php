@@ -6,6 +6,7 @@ use App\Http\Controllers\DespachoController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\OficinaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SolicitudController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -98,6 +99,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/solicitudes')->name('ad
     Route::post('/{solicitud}/aprobar', [DespachoController::class, 'aprobar'])->name('aprobar');
     Route::get('/{solicitud}/rechazar', [DespachoController::class, 'formRechazar'])->name('formRechazar');
     Route::post('/{solicitud}/rechazar', [DespachoController::class, 'rechazar'])->name('rechazar');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Módulo 7 — Reportes (Admin)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->prefix('reportes')->name('reportes.')->group(function () {
+    Route::get('/inventario', [ReporteController::class, 'inventario'])->name('inventario');
+    Route::get('/solicitudes', [ReporteController::class, 'solicitudes'])->name('solicitudes');
+    Route::get('/asignaciones', [ReporteController::class, 'asignaciones'])->name('asignaciones');
+    Route::get('/movimientos', [ReporteController::class, 'movimientos'])->name('movimientos');
 });
 
 require __DIR__.'/auth.php';
