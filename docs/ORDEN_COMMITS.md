@@ -22,6 +22,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 12 | 2026-11-01 | `feat: agregar aprobacion y despacho de solicitudes con transaccion` | Aprobar/rechazar con bloqueo, asignación exacta y bitácora |
 | 13 | 2026-11-01 | `docs: actualizar seguimiento con aprobacion y despacho` | Se actualiza estado de backend/frontend |
 | 14 | 2026-11-01 | `feat: agregar reportes basicos para admin` | Inventario, solicitudes, asignaciones y movimientos |
+| 15 | 2026-11-01 | `docs: actualizar seguimiento con reportes` | Se actualiza estado de backend/frontend |
 
 
 ## Pendientes por hacer
