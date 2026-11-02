@@ -12,6 +12,8 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 2 | 2026-10-27 | `config: actualizar APP_URL a http://127.0.0.1:8001` | Se ajusta APP_URL para poder trabajar en puerto 8001 y evitar el error 419 al registrarse |
 | 3 | 2026-10-27 | `chore: sincronizar estado del proyecto` | Sincronización del proyecto tal como quedó funcionando |
 | 4 | 2026-11-01 | `docs: agregar seguimiento de commits y guias backend/frontend` | Se crean docs/ORDEN_COMMITS.md, docs/BACKEND.md, docs/FRONTEND.md para llevar control entre avances |
+| 5 | 2026-11-01 | `docs: actualizar orden de commits` | Actualización del historial |
+| 6 | 2026-11-01 | `feat: completar CRUD de oficinas para admin` | Se agregan crear/editar/desactivar oficinas con validaciones |
 
 
 ## Pendientes por hacer
