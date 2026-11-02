@@ -24,6 +24,9 @@ Llevar control de las vistas, componentes, layout y lo que falta por mostrar cor
 | equipos/index.blade.php | Funcional | Listado con filtros, acciones por estado |
 | equipos/create.blade.php | Funcional | Registro de equipos |
 | equipos/edit.blade.php | Funcional | Edición de equipos |
+| solicitudes/index.blade.php | Funcional | Listado de solicitudes del solicitante |
+| solicitudes/create.blade.php | Funcional | Crear solicitud |
+| solicitudes/show.blade.php | Funcional | Detalle con equipos asignados |
 | profile/* | Presente | Editar perfil |
 
 ## Componentes

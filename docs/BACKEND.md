@@ -23,7 +23,7 @@ Este documento tiene como objetivo llevar el control del backend: rutas, control
 | Oficinas | Funcional | CRUD completo para admin. Crear, editar, activar/desactivar. |
 | Categorías | Funcional | CRUD completo para admin. Crear, editar, activar/desactivar. |
 | Inventario (Equipos) | Funcional | CRUD, filtros, baja lógica, restauración, cambio manual de estado con bitácora. |
-| Solicitudes | Sin iniciar | Falta crear, ver propias, cancelar. |
+| Solicitudes | Funcional | Crear, listar propias, ver detalle, cancelar pendiente. |
 | Aprobación/Despacho | Sin iniciar | Falta aprobar/rechazar con selección de equipos, transacción y bloqueo. |
 | Dashboard | Parcial | Existe controlador con lógica por rol, pero hay que revisar vistas y datos. |
 | Reportes | Sin iniciar | Falta inventario, solicitudes por estado, asignaciones por oficina, movimientos. |

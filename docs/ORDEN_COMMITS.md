@@ -17,6 +17,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 7 | 2026-11-01 | `feat: agregar CRUD de categorias para admin` | Se agregan crear/editar/desactivar categorías con validaciones |
 | 8 | 2026-11-01 | `feat: agregar inventario de equipos con CRUD, filtros, baja y cambio de estado` | Se agrega módulo de equipos completo para admin |
 | 9 | 2026-11-01 | `docs: actualizar orden y estado con inventario` | Se actualiza seguimiento con inventario |
+| 10 | 2026-11-01 | `feat: agregar modulo de solicitudes para solicitante` | Solicitar, listar, ver detalle, cancelar pendiente |
 
 
 ## Pendientes por hacer
