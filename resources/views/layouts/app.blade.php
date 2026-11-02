@@ -22,10 +22,23 @@
 
         @php
             $rol = auth()->user()->role ?? '';
-            $items = [
-                ['ruta' => 'dashboard', 'etiqueta' => 'Panel', 'visible' => true],
-                ['ruta' => 'oficinas.index', 'etiqueta' => 'Oficinas', 'visible' => $rol === 'admin'],
-            ];
+            $items = [];
+
+            if ($rol === 'admin') {
+                $items = [
+                    ['ruta' => 'dashboard', 'etiqueta' => 'Panel', 'visible' => true],
+                    ['ruta' => 'admin.solicitudes.index', 'etiqueta' => 'Solicitudes', 'visible' => true],
+                    ['ruta' => 'equipos.index', 'etiqueta' => 'Inventario', 'visible' => true],
+                    ['ruta' => 'categorias.index', 'etiqueta' => 'Categorías', 'visible' => true],
+                    ['ruta' => 'oficinas.index', 'etiqueta' => 'Oficinas', 'visible' => true],
+                    ['ruta' => 'reportes.inventario', 'etiqueta' => 'Reportes', 'visible' => true],
+                ];
+            } else {
+                $items = [
+                    ['ruta' => 'dashboard', 'etiqueta' => 'Panel', 'visible' => true],
+                    ['ruta' => 'solicitudes.index', 'etiqueta' => 'Mis solicitudes', 'visible' => true],
+                ];
+            }
         @endphp
 
         <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
@@ -34,8 +47,8 @@
                     <a href="{{ route($item['ruta']) }}"
                        @class([
                            'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                           'bg-blue-50 text-blue-700' => request()->routeIs($item['ruta']),
-                           'text-slate-600 hover:bg-slate-100 hover:text-slate-900' => ! request()->routeIs($item['ruta']),
+                           'bg-blue-50 text-blue-700' => request()->routeIs(str_replace(['.index', '.create', '.edit'], ['.*', '.*', '.*'], $item['ruta'])) || request()->routeIs($item['ruta']),
+                           'text-slate-600 hover:bg-slate-100 hover:text-slate-900' => ! (request()->routeIs(str_replace(['.index', '.create', '.edit'], ['.*', '.*', '.*'], $item['ruta'])) || request()->routeIs($item['ruta'])),
                        ])>
                         {{ $item['etiqueta'] }}
                     </a>
