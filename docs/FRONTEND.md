@@ -21,6 +21,9 @@ Llevar control de las vistas, componentes, layout y lo que falta por mostrar cor
 | dashboard/solicitante.blade.php | Presente | Revisar que muestre datos reales |
 | oficinas/index.blade.php | Funcional | Listado, crear, editar, activar/desactivar |
 | categorias/index.blade.php | Funcional | Listado, crear, editar, activar/desactivar |
+| equipos/index.blade.php | Funcional | Listado con filtros, acciones por estado |
+| equipos/create.blade.php | Funcional | Registro de equipos |
+| equipos/edit.blade.php | Funcional | Edición de equipos |
 | profile/* | Presente | Editar perfil |
 
 ## Componentes

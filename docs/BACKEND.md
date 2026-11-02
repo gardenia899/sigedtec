@@ -22,7 +22,7 @@ Este documento tiene como objetivo llevar el control del backend: rutas, control
 | Autenticación (Breeze) | Funcional | Login, registro, logout. El registro fuerza el rol solicitante y pide oficina activa. |
 | Oficinas | Funcional | CRUD completo para admin. Crear, editar, activar/desactivar. |
 | Categorías | Funcional | CRUD completo para admin. Crear, editar, activar/desactivar. |
-| Inventario (Equipos) | Sin iniciar | Falta CRUD, soft delete, filtros. |
+| Inventario (Equipos) | Funcional | CRUD, filtros, baja lógica, restauración, cambio manual de estado con bitácora. |
 | Solicitudes | Sin iniciar | Falta crear, ver propias, cancelar. |
 | Aprobación/Despacho | Sin iniciar | Falta aprobar/rechazar con selección de equipos, transacción y bloqueo. |
 | Dashboard | Parcial | Existe controlador con lógica por rol, pero hay que revisar vistas y datos. |

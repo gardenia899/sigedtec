@@ -15,6 +15,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 5 | 2026-11-01 | `docs: actualizar orden de commits` | Actualización del historial |
 | 6 | 2026-11-01 | `feat: completar CRUD de oficinas para admin` | Se agregan crear/editar/desactivar oficinas con validaciones |
 | 7 | 2026-11-01 | `feat: agregar CRUD de categorias para admin` | Se agregan crear/editar/desactivar categorías con validaciones |
+| 8 | 2026-11-01 | `feat: agregar inventario de equipos con CRUD, filtros, baja y cambio de estado` | Se agrega módulo de equipos completo para admin |
 
 
 ## Pendientes por hacer
