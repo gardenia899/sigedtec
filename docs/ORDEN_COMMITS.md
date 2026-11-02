@@ -25,6 +25,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 15 | 2026-11-01 | `docs: actualizar seguimiento con reportes` | Se actualiza estado de backend/frontend |
 | 16 | 2026-11-01 | `feat: actualizar menu segun rol para acceder a todos los modulos` | Se agregan accesos directos al menú |
 | 17 | 2026-11-02 | `feat: mejorar dashboard con acciones rapidas` | Se agregan accesos directos en dashboard |
+| 18 | 2026-11-02 | `fix: permitir actualizar status de equipos desde controlador` | Se corrige mass assignment para cambio de estado |
 
 
 ## Pendientes por hacer
