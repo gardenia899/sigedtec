@@ -33,6 +33,11 @@ Route::middleware('auth')->group(function () {
 */
 Route::middleware(['auth', 'role:admin'])->prefix('oficinas')->name('oficinas.')->group(function () {
     Route::get('/', [OficinaController::class, 'index'])->name('index');
+    Route::get('/crear', [OficinaController::class, 'create'])->name('create');
+    Route::post('/', [OficinaController::class, 'store'])->name('store');
+    Route::get('/{office}/editar', [OficinaController::class, 'edit'])->name('edit');
+    Route::put('/{office}', [OficinaController::class, 'update'])->name('update');
+    Route::patch('/{office}/activar-desactivar', [OficinaController::class, 'toggle'])->name('toggle');
 });
 
 require __DIR__.'/auth.php';
