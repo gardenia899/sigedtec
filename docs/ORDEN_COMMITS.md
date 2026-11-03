@@ -31,6 +31,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 21 | 2026-11-03 | `docs: actualizar estado backend a funcional` | Se actualiza estado del backend |
 | 22 | 2026-11-03 | `feat: permitir ver detalle de solicitudes al admin` | El admin ya puede ver detalle de todas las solicitudes |
 | 23 | 2026-11-03 | `mejora: enlazar solicitudes recientes en dashboard` | Se enlazan solicitudes al detalle desde dashboard |
+| 24 | 2026-11-03 | `fix: mejorar validacion de equipos con mensajes claros` | Se ajustan validaciones únicas para equipos |
 
 
 ## Pendientes por hacer
