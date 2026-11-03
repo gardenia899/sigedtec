@@ -77,15 +77,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('inventario')->name('equipos.'
 
 /*
 |--------------------------------------------------------------------------
-| Módulo 5 — Solicitudes (Solicitante)
+| Módulo 5 — Solicitudes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:solicitante'])->prefix('solicitudes')->name('solicitudes.')->group(function () {
-    Route::get('/', [SolicitudController::class, 'index'])->name('index');
-    Route::get('/crear', [SolicitudController::class, 'create'])->name('create');
-    Route::post('/', [SolicitudController::class, 'store'])->name('store');
+Route::middleware(['auth'])->prefix('solicitudes')->name('solicitudes.')->group(function () {
+    Route::get('/', [SolicitudController::class, 'index'])->name('index')->middleware('role:solicitante');
+    Route::get('/crear', [SolicitudController::class, 'create'])->name('create')->middleware('role:solicitante');
+    Route::post('/', [SolicitudController::class, 'store'])->name('store')->middleware('role:solicitante');
     Route::get('/{solicitud}', [SolicitudController::class, 'show'])->name('show');
-    Route::post('/{solicitud}/cancelar', [SolicitudController::class, 'cancelar'])->name('cancelar');
+    Route::post('/{solicitud}/cancelar', [SolicitudController::class, 'cancelar'])->name('cancelar')->middleware('role:solicitante');
 });
 
 /*

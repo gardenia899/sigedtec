@@ -58,7 +58,11 @@ class SolicitudController extends Controller
 
     public function show(Request $request, EquipmentRequest $solicitud): View
     {
-        $this->authorizeSolicitud($request, $solicitud);
+        $user = $request->user();
+
+        if ($solicitud->user_id !== $user->id && !$user->isAdmin()) {
+            abort(404);
+        }
 
         $solicitud->load(['category', 'office', 'user', 'procesadaPor', 'items.equipment']);
 
@@ -67,7 +71,11 @@ class SolicitudController extends Controller
 
     public function cancelar(Request $request, EquipmentRequest $solicitud): RedirectResponse
     {
-        $this->authorizeSolicitud($request, $solicitud);
+        $user = $request->user();
+
+        if ($solicitud->user_id !== $user->id) {
+            abort(404);
+        }
 
         if ($solicitud->status !== 'pendiente') {
             return back()->with('error', 'Solo se pueden cancelar solicitudes pendientes.');
@@ -76,12 +84,5 @@ class SolicitudController extends Controller
         $solicitud->update(['status' => 'cancelada']);
 
         return redirect()->route('solicitudes.index')->with('success', 'Solicitud cancelada correctamente.');
-    }
-
-    private function authorizeSolicitud(Request $request, EquipmentRequest $solicitud): void
-    {
-        if ($solicitud->user_id !== $request->user()->id) {
-            abort(404);
-        }
     }
 }

@@ -51,11 +51,15 @@
                     <td class="px-4 py-3 text-right">
                         @if ($solicitud->status === 'pendiente')
                             <div class="flex items-center justify-end gap-2">
+                                <a href="{{ route('solicitudes.show', $solicitud) }}" class="text-sm text-indigo-600 hover:text-indigo-800">Ver</a>
                                 <a href="{{ route('admin.solicitudes.form', $solicitud) }}" class="text-sm text-green-600 hover:text-green-800">Aprobar</a>
                                 <a href="{{ route('admin.solicitudes.formRechazar', $solicitud) }}" class="text-sm text-red-600 hover:text-red-800">Rechazar</a>
                             </div>
                         @else
-                            <span class="text-sm text-slate-400">Procesada</span>
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ route('solicitudes.show', $solicitud) }}" class="text-sm text-indigo-600 hover:text-indigo-800">Ver</a>
+                                <span class="text-sm text-slate-400">Procesada</span>
+                            </div>
                         @endif
                     </td>
                 </tr>
