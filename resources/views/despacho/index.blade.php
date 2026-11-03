@@ -8,9 +8,9 @@
 
     <div class="mb-6 flex flex-wrap gap-2">
         <a href="{{ route('admin.solicitudes.index', ['estado' => 'pendiente']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'pendiente' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Pendientes ({{ $contadores['pendiente'] }})</a>
-        <a href="{{ route('admin.solicitudes.index', ['estado' => 'aprobada']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'aprobada' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Aprobadas ({{ $contadores['aprobada'] }})</a>
-        <a href="{{ route('admin.solicitudes.index', ['estado' => 'rechazada']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'rechazada' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Rechazadas ({{ $contadores['rechazada'] }})</a>
-        <a href="{{ route('admin.solicitudes.index', ['estado' => 'cancelada']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'cancelada' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Canceladas ({{ $contadores['cancelada'] }})</a>
+        <a href="{{ route('admin.solicitudes.index', ['estado' => 'aprobada']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'aprobada' ? 'bg-green-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Aprobadas ({{ $contadores['aprobada'] }})</a>
+        <a href="{{ route('admin.solicitudes.index', ['estado' => 'rechazada']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'rechazada' ? 'bg-red-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Rechazadas ({{ $contadores['rechazada'] }})</a>
+        <a href="{{ route('admin.solicitudes.index', ['estado' => 'cancelada']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'cancelada' ? 'bg-slate-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Canceladas ({{ $contadores['cancelada'] }})</a>
         <a href="{{ route('admin.solicitudes.index', ['estado' => 'todas']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'todas' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Todas</a>
     </div>
 
