@@ -25,7 +25,7 @@ Este documento tiene como objetivo llevar el control del backend: rutas, control
 | Inventario (Equipos) | Funcional | CRUD, filtros, baja lógica, restauración, cambio manual de estado con bitácora. |
 | Solicitudes | Funcional | Crear, listar propias, ver detalle, cancelar pendiente. |
 | Aprobación/Despacho | Funcional | Bandeja, aprobar con selección de equipos, bloqueo, transacción, rechazar con observación. |
-| Dashboard | Parcial | Existe controlador con lógica por rol, pero hay que revisar vistas y datos. |
+| Dashboard | Funcional | Panel por rol con contadores reales, recientes y accesos rápidos. |
 | Reportes | Funcional | Inventario, solicitudes, asignaciones, movimientos con filtros. |
 
 ## Rutas activas ahora mismo
@@ -34,13 +34,7 @@ Revisando con `route:list` hay rutas de auth, dashboard, profile, oficinas (inde
 
 ## Lo que sigue
 
-1. Terminar el módulo de Oficinas (crear/editar/desactivar) con validaciones correctas.
-2. Terminar Categorías.
-3. Inventario con estados y bitácora.
-4. Solicitudes para solicitante.
-5. Aprobación/despacho para admin con todo lo transaccional.
-6. Ajustar dashboard para mostrar datos reales.
-7. Reportes básicos.
+Todo lo esencial está funcionando. Se puede seguir afinando detalles si se necesitan.
 
 ## Notas
 
