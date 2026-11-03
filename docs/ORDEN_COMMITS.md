@@ -29,6 +29,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 19 | 2026-11-03 | `estilo: ajustar colores de estados en solicitudes` | Se mejoran colores en bandeja de solicitudes |
 | 20 | 2026-11-03 | `menu: agregar accesos a todos los reportes` | Se agregan enlaces a reportes en menú |
 | 21 | 2026-11-03 | `docs: actualizar estado backend a funcional` | Se actualiza estado del backend |
+| 22 | 2026-11-03 | `feat: permitir ver detalle de solicitudes al admin` | El admin ya puede ver detalle de todas las solicitudes |
 
 
 ## Pendientes por hacer
