@@ -30,6 +30,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 20 | 2026-11-03 | `menu: agregar accesos a todos los reportes` | Se agregan enlaces a reportes en menú |
 | 21 | 2026-11-03 | `docs: actualizar estado backend a funcional` | Se actualiza estado del backend |
 | 22 | 2026-11-03 | `feat: permitir ver detalle de solicitudes al admin` | El admin ya puede ver detalle de todas las solicitudes |
+| 23 | 2026-11-03 | `mejora: enlazar solicitudes recientes en dashboard` | Se enlazan solicitudes al detalle desde dashboard |
 
 
 ## Pendientes por hacer
