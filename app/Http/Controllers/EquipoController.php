@@ -60,7 +60,7 @@ class EquipoController extends Controller
             'category_id' => ['required', 'integer', Rule::exists('categories', 'id')->where('is_active', true)],
             'brand' => ['required', 'string', 'max:80'],
             'model' => ['required', 'string', 'max:80'],
-            'serial_number' => ['nullable', 'string', 'max:80', 'unique:equipment,serial_number'],
+            'serial_number' => ['nullable', 'string', 'max:80', Rule::unique('equipment', 'serial_number')->whereNull('deleted_at')],
             'cpu' => ['nullable', 'string', 'max:120'],
             'ram_gb' => ['nullable', 'integer', 'min:1'],
             'storage_gb' => ['nullable', 'integer', 'min:1'],
@@ -68,6 +68,10 @@ class EquipoController extends Controller
             'status' => ['required', Rule::in(['disponible', 'asignado', 'mantenimiento'])],
             'acquisition_date' => ['nullable', 'date'],
             'observations' => ['nullable', 'string'],
+        ], [
+            'patrimonial_code.unique' => 'Este código patrimonial ya está registrado.',
+            'serial_number.unique' => 'Este número de serie ya está registrado.',
+            'category_id.required' => 'Debes seleccionar una categoría.',
         ]);
 
         DB::transaction(function () use ($data, $request) {
@@ -101,13 +105,16 @@ class EquipoController extends Controller
             'category_id' => ['required', 'integer', Rule::exists('categories', 'id')],
             'brand' => ['required', 'string', 'max:80'],
             'model' => ['required', 'string', 'max:80'],
-            'serial_number' => ['nullable', 'string', 'max:80', Rule::unique('equipment', 'serial_number')->ignore($equipo->id)],
+            'serial_number' => ['nullable', 'string', 'max:80', Rule::unique('equipment', 'serial_number')->ignore($equipo->id)->whereNull('deleted_at')],
             'cpu' => ['nullable', 'string', 'max:120'],
             'ram_gb' => ['nullable', 'integer', 'min:1'],
             'storage_gb' => ['nullable', 'integer', 'min:1'],
             'storage_type' => ['nullable', 'string', Rule::in(['hdd', 'ssd', 'nvme', 'emmc'])],
             'acquisition_date' => ['nullable', 'date'],
             'observations' => ['nullable', 'string'],
+        ], [
+            'patrimonial_code.unique' => 'Este código patrimonial ya está registrado.',
+            'serial_number.unique' => 'Este número de serie ya está registrado.',
         ]);
 
         $equipo->update($data);
