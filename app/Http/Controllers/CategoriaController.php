@@ -28,6 +28,9 @@ class CategoriaController extends Controller
             'name' => ['required', 'string', 'max:80', 'unique:categories,name'],
             'description' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
+        ], [
+            'name.unique' => 'Ya existe una categoría con ese nombre.',
+            'name.required' => 'El nombre es obligatorio.',
         ]);
 
         $data['name'] = mb_strtolower(trim($data['name']));
@@ -49,6 +52,8 @@ class CategoriaController extends Controller
             'name' => ['required', 'string', 'max:80', Rule::unique('categories', 'name')->ignore($categoria->id)],
             'description' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
+        ], [
+            'name.unique' => 'Ya existe una categoría con ese nombre.',
         ]);
 
         $data['name'] = mb_strtolower(trim($data['name']));
