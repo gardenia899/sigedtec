@@ -32,6 +32,9 @@
                     ['ruta' => 'categorias.index', 'etiqueta' => 'Categorías', 'visible' => true],
                     ['ruta' => 'oficinas.index', 'etiqueta' => 'Oficinas', 'visible' => true],
                     ['ruta' => 'reportes.inventario', 'etiqueta' => 'Reportes', 'visible' => true],
+                    ['ruta' => 'reportes.solicitudes', 'etiqueta' => 'Reportes solicitudes', 'visible' => true],
+                    ['ruta' => 'reportes.asignaciones', 'etiqueta' => 'Asignaciones', 'visible' => true],
+                    ['ruta' => 'reportes.movimientos', 'etiqueta' => 'Movimientos', 'visible' => true],
                 ];
             } else {
                 $items = [
