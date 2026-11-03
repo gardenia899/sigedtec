@@ -30,8 +30,9 @@
     <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
         {{-- Solicitudes recientes --}}
         <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div class="border-b border-slate-200 px-4 py-3">
+            <div class="border-b border-slate-200 px-4 py-3 flex items-center justify-between">
                 <h2 class="text-sm font-semibold text-slate-700">Solicitudes recientes</h2>
+                <a href="{{ route('admin.solicitudes.index') }}" class="text-xs text-indigo-600 hover:text-indigo-800">Ver todas</a>
             </div>
             @if ($solicitudesRecientes->isEmpty())
                 <p class="p-4 text-sm text-slate-500">Aún no hay solicitudes registradas.</p>
@@ -40,14 +41,14 @@
                     @foreach ($solicitudesRecientes as $solicitud)
                         <li class="flex items-center gap-3 px-4 py-3 text-sm">
                             <div class="min-w-0 flex-1">
-                                <p class="truncate font-medium text-slate-800">
+                                <a href="{{ route('solicitudes.show', $solicitud) }}" class="truncate font-medium text-slate-800 hover:text-indigo-600">
                                     {{ $solicitud->quantity }} × {{ $solicitud->category->name }}
-                                </p>
+                                </a>
                                 <p class="truncate text-xs text-slate-500">
                                     {{ $solicitud->office->name }} · {{ $solicitud->user->name }}
                                 </p>
                             </div>
-                            @php $mapa = ['pendiente' => 'warning', 'aprobada' => 'success', 'rechazada' => 'danger', 'cancelada' => 'info']; @endphp
+                            @php $mapa = ['pendiente' => 'warning', 'aprobada' => 'success', 'rechazada' => 'danger', 'cancelada' => 'neutral']; @endphp
                             <x-ui.badge :type="$mapa[$solicitud->status]" :label="ucfirst($solicitud->status)" />
                         </li>
                     @endforeach
