@@ -36,6 +36,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 26 | 2026-11-03 | `feat: agregar modulo de usuarios para cambiar roles` | Se crea módulo de usuarios para que admin cambie roles |
 | 27 | 2026-11-05 | `feat: rediseñar la interfaz y adaptar las especificaciones a cada categoría` | Portada pública, design system en todos los módulos, especificaciones técnicas según la categoría del equipo y catálogo de 14 tipos de aparato |
 | 28 | 2026-11-05 | `perf: indexar las consultas mas usadas y limitar columnas en los listados` | Índices para panel, bandeja y reportes; columnas explícitas en los listados y paginación que conserva el filtro |
+| 29 | 2026-11-05 | `docs: actualizar estado backend y frontend` | Se documentan las especificaciones por categoría, la portada pública y las optimizaciones |
 
 
 ## Pendientes por hacer
