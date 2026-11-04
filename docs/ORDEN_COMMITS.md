@@ -33,6 +33,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 23 | 2026-11-03 | `mejora: enlazar solicitudes recientes en dashboard` | Se enlazan solicitudes al detalle desde dashboard |
 | 24 | 2026-11-03 | `fix: mejorar validacion de equipos con mensajes claros` | Se ajustan validaciones únicas para equipos |
 | 25 | 2026-11-03 | `fix: mensajes de validacion en categorias` | Se agregan mensajes claros para categorías |
+| 26 | 2026-11-03 | `feat: agregar modulo de usuarios para cambiar roles` | Se crea módulo de usuarios para que admin cambie roles |
 
 
 ## Pendientes por hacer
