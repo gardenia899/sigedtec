@@ -1,58 +1,60 @@
 <x-app-layout>
     <x-slot name="header">Reportes</x-slot>
 
-    <div class="mb-6">
-        <h2 class="text-lg font-semibold text-slate-800">Solicitudes por estado</h2>
-        <p class="text-sm text-slate-500">Listado de todas las solicitudes.</p>
-    </div>
+    <x-ui.page-header title="Solicitudes por estado" subtitle="Listado de todas las solicitudes registradas en el sistema.">
+        <a href="{{ route('reportes.solicitudes') }}" class="btn btn-outline">Limpiar filtros</a>
+    </x-ui.page-header>
 
-    <form method="GET" action="{{ route('reportes.solicitudes') }}" class="mb-6 grid gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-3">
-        <select name="estado" class="rounded-md border-slate-300 text-sm">
+    <form method="GET" action="{{ route('reportes.solicitudes') }}" class="filter-bar mt-6 md:grid-cols-3">
+        <select name="estado" class="field-select">
             <option value="">Todos los estados</option>
             <option value="pendiente" @selected(($filtros['estado'] ?? null) == 'pendiente')>Pendiente</option>
             <option value="aprobada" @selected(($filtros['estado'] ?? null) == 'aprobada')>Aprobada</option>
             <option value="rechazada" @selected(($filtros['estado'] ?? null) == 'rechazada')>Rechazada</option>
             <option value="cancelada" @selected(($filtros['estado'] ?? null) == 'cancelada')>Cancelada</option>
         </select>
-        <select name="oficina" class="rounded-md border-slate-300 text-sm">
+        <select name="oficina" class="field-select">
             <option value="">Todas las oficinas</option>
             @foreach ($oficinas as $oficina)
                 <option value="{{ $oficina->id }}" @selected(($filtros['oficina'] ?? null) == $oficina->id)>{{ $oficina->name }}</option>
             @endforeach
         </select>
-        <div class="flex items-center gap-2">
-            <button class="rounded-md bg-slate-800 px-3 py-2 text-sm text-white">Filtrar</button>
-            <a href="{{ route('reportes.solicitudes') }}" class="text-sm text-slate-600">Limpiar</a>
-        </div>
+        <button class="btn btn-primary">
+            <x-ui.icon name="search" class="h-4 w-4" />
+            Filtrar
+        </button>
     </form>
 
-    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-        <table class="min-w-full text-sm">
+    <div class="table-wrap mt-6">
+        <table class="table-ui">
             <thead>
-            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                <th class="px-4 py-2.5">#</th>
-                <th class="px-4 py-2.5">Oficina</th>
-                <th class="px-4 py-2.5">Solicitante</th>
-                <th class="px-4 py-2.5">Categoría</th>
-                <th class="px-4 py-2.5">Cantidad</th>
-                <th class="px-4 py-2.5">Fecha</th>
-                <th class="px-4 py-2.5">Estado</th>
+            <tr>
+                <th>#</th>
+                <th>Oficina</th>
+                <th>Solicitante</th>
+                <th>Categoría</th>
+                <th>Cantidad</th>
+                <th>Fecha</th>
+                <th>Estado</th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody>
             @forelse ($solicitudes as $solicitud)
                 <tr>
-                    <td class="px-4 py-3 text-slate-600">{{ $solicitud->id }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $solicitud->office->name }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $solicitud->user->name }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ ucfirst($solicitud->category->name) }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $solicitud->quantity }}</td>
-                    <td class="px-4 py-3 text-slate-600">{{ $solicitud->created_at->format('d/m/Y H:i') }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ ucfirst($solicitud->status) }}</td>
+                    <td class="font-mono text-xs text-slate-500">#{{ str_pad($solicitud->id, 4, '0', STR_PAD_LEFT) }}</td>
+                    <td>{{ $solicitud->office->name }}</td>
+                    <td>{{ $solicitud->user->name }}</td>
+                    <td>{{ ucfirst($solicitud->category->name) }}</td>
+                    <td>{{ $solicitud->quantity }}</td>
+                    <td class="text-slate-600">{{ $solicitud->created_at->format('d/m/Y H:i') }}</td>
+                    <td>
+                        <x-ui.badge :type="$solicitud->status === 'pendiente' ? 'warning' : ($solicitud->status === 'aprobada' ? 'success' : ($solicitud->status === 'rechazada' ? 'danger' : 'neutral'))"
+                                    :label="ucfirst($solicitud->status)" />
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="px-4 py-8 text-center text-sm text-slate-500">No hay solicitudes.</td>
+                    <td colspan="7" class="empty-state">No hay solicitudes para los filtros seleccionados.</td>
                 </tr>
             @endforelse
             </tbody>

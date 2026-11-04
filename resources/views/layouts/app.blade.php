@@ -17,8 +17,6 @@
     $esAdmin = $usuario?->isAdmin() ?? false;
     $activo = fn (...$rutas) => request()->routeIs(...$rutas);
 
-    $enDashboard = request()->routeIs('dashboard');
-
     if ($esAdmin) {
         $menu = [
             ['tipo' => 'enlace', 'etiqueta' => 'Inicio', 'icono' => 'home', 'ruta' => 'dashboard', 'activo' => $activo('dashboard')],
@@ -36,18 +34,12 @@
             ]],
             ['tipo' => 'enlace', 'etiqueta' => 'Usuarios', 'icono' => 'users', 'ruta' => 'usuarios.index', 'activo' => $activo('usuarios.*')],
         ];
-        if (! $enDashboard) {
-            $menu[] = ['tipo' => 'enlace', 'etiqueta' => 'Mi perfil', 'icono' => 'user', 'ruta' => 'profile.edit', 'activo' => $activo('profile.*')];
-        }
     } else {
         $menu = [
             ['tipo' => 'enlace', 'etiqueta' => 'Inicio', 'icono' => 'home', 'ruta' => 'dashboard', 'activo' => $activo('dashboard')],
             ['tipo' => 'enlace', 'etiqueta' => 'Mis solicitudes', 'icono' => 'clipboard', 'ruta' => 'solicitudes.index', 'activo' => $activo('solicitudes.index', 'solicitudes.show')],
             ['tipo' => 'enlace', 'etiqueta' => 'Nueva solicitud', 'icono' => 'plus', 'ruta' => 'solicitudes.create', 'activo' => $activo('solicitudes.create')],
         ];
-        if (! $enDashboard) {
-            $menu[] = ['tipo' => 'enlace', 'etiqueta' => 'Mi perfil', 'icono' => 'user', 'ruta' => 'profile.edit', 'activo' => $activo('profile.*')];
-        }
     }
 @endphp
 
@@ -116,12 +108,6 @@
                 <div class="mt-3 space-y-1.5 text-[10.5px] text-slate-500">
                     <p class="flex items-center gap-2 px-1"><x-ui.icon name="settings" class="h-3.5 w-3.5" />SIGEDTEC v1.0</p>
                     <p class="flex items-center gap-2 px-1"><x-ui.icon name="layers" class="h-3.5 w-3.5" />Laravel + PostgreSQL</p>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="flex w-full items-center gap-2 rounded-lg px-1 py-1.5 text-left font-medium text-slate-400 transition hover:text-white">
-                            <x-ui.icon name="logout" class="h-4 w-4" />Cerrar sesión
-                        </button>
-                    </form>
                 </div>
             </div>
         @endif

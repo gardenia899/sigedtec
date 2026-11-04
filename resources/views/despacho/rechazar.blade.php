@@ -1,27 +1,46 @@
 <x-app-layout>
     <x-slot name="header">Rechazar solicitud</x-slot>
 
-    <div class="mb-6">
-        <h2 class="text-lg font-semibold text-slate-800">Solicitud #{{ $solicitud->id }}</h2>
-        <p class="text-sm text-slate-500">{{ $solicitud->office->name }} - {{ $solicitud->user->name }}</p>
-    </div>
+    <x-ui.page-header :title="'Rechazar solicitud #'.str_pad($solicitud->id, 4, '0', STR_PAD_LEFT)"
+                      :subtitle="$solicitud->office->name.' · '.$solicitud->user->name">
+        <x-ui.badge type="warning" label="Pendiente" />
+        <a href="{{ route('admin.solicitudes.index') }}" class="btn btn-outline">
+            <x-ui.icon name="arrow-right" class="h-4 w-4 rotate-180" />
+            Volver a la bandeja
+        </a>
+    </x-ui.page-header>
 
-    <div class="max-w-2xl">
-        <form method="POST" action="{{ route('admin.solicitudes.rechazar', $solicitud) }}" class="rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div class="mt-6 max-w-2xl">
+        <form method="POST" action="{{ route('admin.solicitudes.rechazar', $solicitud) }}" class="panel">
             @csrf
 
+            <div class="panel-head">
+                <h2 class="panel-title">
+                    <x-ui.icon name="file-text" class="h-4 w-4 text-rose-600" />
+                    Motivo del rechazo
+                </h2>
+            </div>
+
             <div class="space-y-4 p-6">
+                <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+                    <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Justificación del solicitante</p>
+                    <p class="mt-1.5 text-[13px] leading-relaxed text-slate-700">{{ $solicitud->justification }}</p>
+                </div>
+
                 <div>
-                    <x-input-label for="admin_observation" value="Motivo del rechazo" />
-                    <textarea id="admin_observation" name="admin_observation" rows="4" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('admin_observation') }}</textarea>
-                    <p class="mt-1 text-xs text-slate-500">Debes indicar el motivo para rechazar esta solicitud.</p>
-                    <x-input-error :messages="$errors->get('admin_observation')" class="mt-2" />
+                    <x-input-label for="admin_observation" value="Motivo del rechazo *" />
+                    <textarea id="admin_observation" name="admin_observation" rows="4" required class="field-area mt-1.5">{{ old('admin_observation') }}</textarea>
+                    <p class="mt-1.5 text-xs text-slate-500">Debes indicar el motivo para rechazar esta solicitud.</p>
+                    <x-input-error :messages="$errors->get('admin_observation')" class="field-error" />
                 </div>
             </div>
 
-            <div class="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
-                <a href="{{ route('admin.solicitudes.index') }}" class="text-sm text-slate-600 hover:text-slate-800">Cancelar</a>
-                <button class="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">Rechazar solicitud</button>
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-4">
+                <a href="{{ route('admin.solicitudes.index') }}" class="btn btn-ghost">Cancelar</a>
+                <button class="btn bg-rose-600 text-white hover:bg-rose-700" type="submit">
+                    <x-ui.icon name="bell" class="h-4 w-4" />
+                    Rechazar solicitud
+                </button>
             </div>
         </form>
     </div>

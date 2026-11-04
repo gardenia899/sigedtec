@@ -22,11 +22,16 @@ class DespachoController extends Controller
             ->orderByDesc('created_at')
             ->paginate(15);
 
+        // Un solo recorrido de la tabla para los cuatro contadores (antes: cuatro COUNT).
+        $conteos = EquipmentRequest::selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         $contadores = [
-            'pendiente' => EquipmentRequest::where('status', 'pendiente')->count(),
-            'aprobada' => EquipmentRequest::where('status', 'aprobada')->count(),
-            'rechazada' => EquipmentRequest::where('status', 'rechazada')->count(),
-            'cancelada' => EquipmentRequest::where('status', 'cancelada')->count(),
+            'pendiente' => (int) ($conteos['pendiente'] ?? 0),
+            'aprobada' => (int) ($conteos['aprobada'] ?? 0),
+            'rechazada' => (int) ($conteos['rechazada'] ?? 0),
+            'cancelada' => (int) ($conteos['cancelada'] ?? 0),
         ];
 
         return view('despacho.index', compact('solicitudes', 'estado', 'contadores'));
@@ -38,8 +43,7 @@ class DespachoController extends Controller
             abort(409, 'Esta solicitud ya fue procesada.');
         }
 
-        $equipos = Equipment::with('category')
-            ->where('category_id', $solicitud->category_id)
+        $equipos = Equipment::where('category_id', $solicitud->category_id)
             ->where('status', 'disponible')
             ->whereNull('deleted_at')
             ->orderBy('patrimonial_code')

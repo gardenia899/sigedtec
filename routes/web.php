@@ -82,7 +82,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('inventario')->name('equipos.'
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->prefix('solicitudes')->name('solicitudes.')->group(function () {
-    Route::get('/', [SolicitudController::class, 'index'])->name('index')->middleware('role:solicitante');
+    Route::get('/', [SolicitudController::class, 'index'])->name('index');
     Route::get('/crear', [SolicitudController::class, 'create'])->name('create')->middleware('role:solicitante');
     Route::post('/', [SolicitudController::class, 'store'])->name('store')->middleware('role:solicitante');
     Route::get('/{solicitud}', [SolicitudController::class, 'show'])->name('show');

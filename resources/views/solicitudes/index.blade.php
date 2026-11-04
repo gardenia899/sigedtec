@@ -1,51 +1,50 @@
 <x-app-layout>
     <x-slot name="header">Mis solicitudes</x-slot>
 
-    <div class="flex items-center justify-between gap-4">
-        <div>
-            <h2 class="text-lg font-semibold text-slate-800">Solicitudes de equipos</h2>
-            <p class="text-sm text-slate-500">Consulta el estado de tus solicitudes.</p>
-        </div>
-        <a href="{{ route('solicitudes.create') }}" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700">Nueva solicitud</a>
-    </div>
+    <x-ui.page-header title="Solicitudes de equipos" subtitle="Consulta el estado de las solicitudes que has enviado.">
+        <a href="{{ route('solicitudes.create') }}" class="btn btn-primary">
+            <x-ui.icon name="plus" class="h-4 w-4" />
+            Nueva solicitud
+        </a>
+    </x-ui.page-header>
 
     @if (session('success'))
-        <div class="mt-4 rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('success') }}</div>
+        <x-ui.alert type="success" class="mt-4">{{ session('success') }}</x-ui.alert>
     @endif
     @if (session('error'))
-        <div class="mt-4 rounded-md bg-red-50 p-4 text-sm text-red-700">{{ session('error') }}</div>
+        <x-ui.alert type="danger" class="mt-4">{{ session('error') }}</x-ui.alert>
     @endif
 
-    <div class="mt-6 overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-        <table class="min-w-full text-sm">
+    <div class="table-wrap mt-6">
+        <table class="table-ui">
             <thead>
-            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                <th class="px-4 py-2.5">#</th>
-                <th class="px-4 py-2.5">Categoría</th>
-                <th class="px-4 py-2.5">Cantidad</th>
-                <th class="px-4 py-2.5">Fecha</th>
-                <th class="px-4 py-2.5">Estado</th>
-                <th class="px-4 py-2.5 text-right">Acciones</th>
+            <tr>
+                <th>#</th>
+                <th>Categoría</th>
+                <th>Cantidad</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th class="text-right">Acciones</th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody>
             @forelse ($solicitudes as $solicitud)
-                <tr class="hover:bg-slate-50">
-                    <td class="px-4 py-3 text-slate-600">{{ $solicitud->id }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ ucfirst($solicitud->category->name ?? '—') }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $solicitud->quantity }}</td>
-                    <td class="px-4 py-3 text-slate-600">{{ $solicitud->created_at->format('d/m/Y H:i') }}</td>
-                    <td class="px-4 py-3">
+                <tr>
+                    <td class="font-mono text-xs text-slate-500">#{{ str_pad($solicitud->id, 4, '0', STR_PAD_LEFT) }}</td>
+                    <td>{{ ucfirst($solicitud->category->name ?? '—') }}</td>
+                    <td>{{ $solicitud->quantity }}</td>
+                    <td class="text-slate-600">{{ $solicitud->created_at->format('d/m/Y H:i') }}</td>
+                    <td>
                         <x-ui.badge :type="$solicitud->status === 'pendiente' ? 'warning' : ($solicitud->status === 'aprobada' ? 'success' : ($solicitud->status === 'rechazada' ? 'danger' : 'neutral'))"
                                     :label="ucfirst($solicitud->status)" />
                     </td>
-                    <td class="px-4 py-3 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            <a href="{{ route('solicitudes.show', $solicitud) }}" class="text-sm text-indigo-600 hover:text-indigo-800">Ver</a>
+                    <td class="text-right">
+                        <div class="flex items-center justify-end gap-3">
+                            <a href="{{ route('solicitudes.show', $solicitud) }}" class="link-action">Ver</a>
                             @if ($solicitud->status === 'pendiente')
                                 <form method="POST" action="{{ route('solicitudes.cancelar', $solicitud) }}" onsubmit="return confirm('¿Cancelar esta solicitud?');">
                                     @csrf
-                                    <button class="text-sm text-red-600 hover:text-red-800">Cancelar</button>
+                                    <button class="link-danger">Cancelar</button>
                                 </form>
                             @endif
                         </div>
@@ -53,9 +52,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500">
-                        No tienes solicitudes registradas.
-                    </td>
+                    <td colspan="6" class="empty-state">No tienes solicitudes registradas.</td>
                 </tr>
             @endforelse
             </tbody>

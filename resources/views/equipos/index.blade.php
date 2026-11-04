@@ -1,66 +1,67 @@
 <x-app-layout>
     <x-slot name="header">Inventario</x-slot>
 
-    <div class="flex items-center justify-between gap-4">
-        <div>
-            <h2 class="text-lg font-semibold text-slate-800">Inventario de equipos</h2>
-            <p class="text-sm text-slate-500">Control de bienes informáticos.</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="{{ route('equipos.index') }}" class="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Activos</a>
-            <a href="{{ route('equipos.index', ['eliminados' => 1]) }}" class="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Dados de baja</a>
-            <a href="{{ route('equipos.create') }}" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700">Nuevo equipo</a>
-        </div>
-    </div>
+    <x-ui.page-header title="Inventario de equipos" subtitle="Control de bienes informáticos del soporte técnico.">
+        <a href="{{ route('equipos.index') }}" class="btn btn-outline btn-sm">Activos</a>
+        <a href="{{ route('equipos.index', ['eliminados' => 1]) }}" class="btn btn-outline btn-sm">Dados de baja</a>
+        <a href="{{ route('equipos.create') }}" class="btn btn-primary">
+            <x-ui.icon name="plus" class="h-4 w-4" />
+            Nuevo equipo
+        </a>
+    </x-ui.page-header>
 
     @if (session('success'))
-        <div class="mt-4 rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('success') }}</div>
+        <x-ui.alert type="success" class="mt-4">{{ session('success') }}</x-ui.alert>
     @endif
     @if (session('error'))
-        <div class="mt-4 rounded-md bg-red-50 p-4 text-sm text-red-700">{{ session('error') }}</div>
+        <x-ui.alert type="danger" class="mt-4">{{ session('error') }}</x-ui.alert>
     @endif
 
-    <form method="GET" action="{{ route('equipos.index') }}" class="mt-6 grid gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-4">
-        <input type="text" name="q" value="{{ $filtros['q'] ?? '' }}" placeholder="Buscar por código, serie, marca o modelo" class="rounded-md border-slate-300 text-sm">
-        <select name="categoria" class="rounded-md border-slate-300 text-sm">
+    <form method="GET" action="{{ route('equipos.index') }}" class="filter-bar mt-6">
+        <input type="text" name="q" value="{{ $filtros['q'] ?? '' }}"
+               placeholder="Buscar por código, serie, marca o modelo" class="field">
+        <select name="categoria" class="field-select">
             <option value="">Todas las categorías</option>
             @foreach ($categorias as $categoria)
                 <option value="{{ $categoria->id }}" @selected(($filtros['categoria'] ?? null) == $categoria->id)>{{ ucfirst($categoria->name) }}</option>
             @endforeach
         </select>
-        <select name="estado" class="rounded-md border-slate-300 text-sm">
+        <select name="estado" class="field-select">
             <option value="">Todos los estados</option>
             <option value="disponible" @selected(($filtros['estado'] ?? null) == 'disponible')>Disponible</option>
             <option value="asignado" @selected(($filtros['estado'] ?? null) == 'asignado')>Asignado</option>
             <option value="mantenimiento" @selected(($filtros['estado'] ?? null) == 'mantenimiento')>En mantenimiento</option>
         </select>
         <div class="flex items-center gap-2">
-            <button class="rounded-md bg-slate-800 px-3 py-2 text-sm text-white">Filtrar</button>
-            <a href="{{ route('equipos.index') }}" class="text-sm text-slate-600">Limpiar</a>
+            <button class="btn btn-primary flex-1">
+                <x-ui.icon name="search" class="h-4 w-4" />
+                Filtrar
+            </button>
+            <a href="{{ route('equipos.index') }}" class="btn btn-ghost">Limpiar</a>
         </div>
     </form>
 
-    <div class="mt-6 overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-        <table class="min-w-full text-sm">
+    <div class="table-wrap mt-6">
+        <table class="table-ui">
             <thead>
-            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                <th class="px-4 py-2.5">Código patrimonial</th>
-                <th class="px-4 py-2.5">Categoría</th>
-                <th class="px-4 py-2.5">Marca / Modelo</th>
-                <th class="px-4 py-2.5">Serie</th>
-                <th class="px-4 py-2.5">Especificaciones</th>
-                <th class="px-4 py-2.5">Estado</th>
-                <th class="px-4 py-2.5 text-right">Acciones</th>
+            <tr>
+                <th>Código patrimonial</th>
+                <th>Categoría</th>
+                <th>Marca / Modelo</th>
+                <th>Serie</th>
+                <th>Especificaciones</th>
+                <th>Estado</th>
+                <th class="text-right">Acciones</th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody>
             @forelse ($equipos as $equipo)
-                <tr class="hover:bg-slate-50">
-                    <td class="px-4 py-3 font-mono text-xs text-slate-700">{{ $equipo->patrimonial_code }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ ucfirst($equipo->category->name ?? '—') }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $equipo->brand }} / {{ $equipo->model }}</td>
-                    <td class="px-4 py-3 text-slate-600">{{ $equipo->serial_number ?? '—' }}</td>
-                    <td class="px-4 py-3 text-xs text-slate-600">
+                <tr>
+                    <td class="font-mono text-xs text-slate-600">{{ $equipo->patrimonial_code }}</td>
+                    <td>{{ ucfirst($equipo->category->name ?? '—') }}</td>
+                    <td>{{ $equipo->brand }} / {{ $equipo->model }}</td>
+                    <td class="text-slate-600">{{ $equipo->serial_number ?? '—' }}</td>
+                    <td class="text-xs text-slate-600">
                         @if ($equipo->cpu) CPU: {{ $equipo->cpu }}<br>
                         @endif
                         @if ($equipo->ram_gb) RAM: {{ $equipo->ram_gb }} GB<br>
@@ -68,35 +69,35 @@
                         @if ($equipo->storage_gb) Almacenamiento: {{ $equipo->storage_gb }} GB {{ strtoupper($equipo->storage_type) }}
                         @endif
                     </td>
-                    <td class="px-4 py-3">
-                        <x-ui.badge :type="$equipo->status === 'disponible' ? 'success' : ($equipo->status === 'asignado' ? 'warning' : 'neutral')"
+                    <td>
+                        <x-ui.badge :type="$equipo->status === 'disponible' ? 'success' : ($equipo->status === 'asignado' ? 'info' : 'neutral')"
                                     :label="$equipo->status === 'disponible' ? 'Disponible' : ($equipo->status === 'asignado' ? 'Asignado' : 'Mantenimiento')" />
                     </td>
-                    <td class="px-4 py-3 text-right">
+                    <td class="text-right">
                         @if (request()->boolean('eliminados'))
                             <form method="POST" action="{{ route('equipos.restore', $equipo->id) }}">
                                 @csrf
                                 @method('PATCH')
-                                <button class="text-sm text-indigo-600 hover:text-indigo-800">Restaurar</button>
+                                <button class="link-action">Restaurar</button>
                             </form>
                         @else
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('equipos.edit', $equipo) }}" class="text-sm text-indigo-600 hover:text-indigo-800">Editar</a>
-                                <form method="POST" action="{{ route('equipos.estado', $equipo) }}" class="flex items-center gap-1">
+                            <div class="flex items-center justify-end gap-3">
+                                <a href="{{ route('equipos.edit', $equipo) }}" class="link-action">Editar</a>
+                                <form method="POST" action="{{ route('equipos.estado', $equipo) }}" class="flex items-center gap-1.5">
                                     @csrf
                                     @method('PATCH')
-                                    <select name="status" class="rounded-md border-slate-300 text-xs">
+                                    <select name="status" class="h-8 rounded-lg border-slate-300 py-0 text-xs">
                                         <option value="disponible">Disponible</option>
                                         <option value="mantenimiento">Mantenimiento</option>
                                         <option value="asignado">Asignado</option>
                                     </select>
-                                    <button class="text-xs text-slate-600">Cambiar</button>
+                                    <button class="link-action">Cambiar</button>
                                 </form>
                                 @if ($equipo->status !== 'asignado')
                                     <form method="POST" action="{{ route('equipos.destroy', $equipo) }}" onsubmit="return confirm('¿Dar de baja este equipo?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="text-sm text-red-600 hover:text-red-800">Baja</button>
+                                        <button class="link-danger">Baja</button>
                                     </form>
                                 @endif
                             </div>
@@ -105,9 +106,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="px-4 py-8 text-center text-sm text-slate-500">
-                        No hay equipos registrados.
-                    </td>
+                    <td colspan="7" class="empty-state">No hay equipos registrados.</td>
                 </tr>
             @endforelse
             </tbody>

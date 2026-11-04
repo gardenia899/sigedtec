@@ -1,73 +1,85 @@
 <x-app-layout>
     <x-slot name="header">Solicitudes</x-slot>
 
-    <div class="mb-6">
-        <h2 class="text-lg font-semibold text-slate-800">Bandeja de solicitudes</h2>
-        <p class="text-sm text-slate-500">Aprobar o rechazar solicitudes de equipos.</p>
-    </div>
+    <x-ui.page-header title="Bandeja de solicitudes" subtitle="Aprueba o rechaza las solicitudes de equipos del personal." />
 
-    <div class="mb-6 flex flex-wrap gap-2">
-        <a href="{{ route('admin.solicitudes.index', ['estado' => 'pendiente']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'pendiente' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Pendientes ({{ $contadores['pendiente'] }})</a>
-        <a href="{{ route('admin.solicitudes.index', ['estado' => 'aprobada']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'aprobada' ? 'bg-green-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Aprobadas ({{ $contadores['aprobada'] }})</a>
-        <a href="{{ route('admin.solicitudes.index', ['estado' => 'rechazada']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'rechazada' ? 'bg-red-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Rechazadas ({{ $contadores['rechazada'] }})</a>
-        <a href="{{ route('admin.solicitudes.index', ['estado' => 'cancelada']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'cancelada' ? 'bg-slate-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Canceladas ({{ $contadores['cancelada'] }})</a>
-        <a href="{{ route('admin.solicitudes.index', ['estado' => 'todas']) }}" class="rounded-md px-3 py-2 text-sm {{ $estado === 'todas' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 border border-slate-300' }}">Todas</a>
+    @php
+        $pestanas = [
+            'pendiente' => ['etiqueta' => 'Pendientes', 'activo' => 'bg-amber-500 text-white', 'punto' => 'bg-amber-400'],
+            'aprobada' => ['etiqueta' => 'Aprobadas', 'activo' => 'bg-emerald-600 text-white', 'punto' => 'bg-emerald-400'],
+            'rechazada' => ['etiqueta' => 'Rechazadas', 'activo' => 'bg-rose-600 text-white', 'punto' => 'bg-rose-400'],
+            'cancelada' => ['etiqueta' => 'Canceladas', 'activo' => 'bg-slate-600 text-white', 'punto' => 'bg-slate-400'],
+            'todas' => ['etiqueta' => 'Todas', 'activo' => 'bg-blue-600 text-white', 'punto' => 'bg-blue-400'],
+        ];
+    @endphp
+
+    <div class="mt-5 flex flex-wrap items-center gap-2">
+        @foreach ($pestanas as $clave => $pestana)
+            <a href="{{ route('admin.solicitudes.index', ['estado' => $clave]) }}"
+               class="inline-flex h-9 items-center gap-2 rounded-lg px-3 text-[13px] font-semibold transition
+                      {{ $estado === $clave ? $pestana['activo'].' shadow-card' : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900' }}">
+                @if ($clave !== 'todas')
+                    <span class="h-1.5 w-1.5 rounded-full {{ $estado === $clave ? 'bg-white/80' : $pestana['punto'] }}" aria-hidden="true"></span>
+                    {{ $pestana['etiqueta'] }} ({{ $contadores[$clave] }})
+                @else
+                    {{ $pestana['etiqueta'] }}
+                @endif
+            </a>
+        @endforeach
     </div>
 
     @if (session('success'))
-        <div class="mb-4 rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('success') }}</div>
+        <x-ui.alert type="success" class="mt-4">{{ session('success') }}</x-ui.alert>
     @endif
     @if (session('error'))
-        <div class="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">{{ session('error') }}</div>
+        <x-ui.alert type="danger" class="mt-4">{{ session('error') }}</x-ui.alert>
     @endif
 
-    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-        <table class="min-w-full text-sm">
+    <div class="table-wrap mt-5">
+        <table class="table-ui">
             <thead>
-            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                <th class="px-4 py-2.5">#</th>
-                <th class="px-4 py-2.5">Oficina</th>
-                <th class="px-4 py-2.5">Solicitante</th>
-                <th class="px-4 py-2.5">Categoría</th>
-                <th class="px-4 py-2.5">Cantidad</th>
-                <th class="px-4 py-2.5">Fecha</th>
-                <th class="px-4 py-2.5">Estado</th>
-                <th class="px-4 py-2.5 text-right">Acciones</th>
+            <tr>
+                <th>#</th>
+                <th>Oficina</th>
+                <th>Solicitante</th>
+                <th>Categoría</th>
+                <th>Cantidad</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th class="text-right">Acciones</th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody>
             @forelse ($solicitudes as $solicitud)
-                <tr class="hover:bg-slate-50">
-                    <td class="px-4 py-3 text-slate-600">{{ $solicitud->id }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $solicitud->office->name }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $solicitud->user->name }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ ucfirst($solicitud->category->name) }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $solicitud->quantity }}</td>
-                    <td class="px-4 py-3 text-slate-600">{{ $solicitud->created_at->format('d/m/Y H:i') }}</td>
-                    <td class="px-4 py-3">
+                <tr>
+                    <td class="font-mono text-xs text-slate-500">#{{ str_pad($solicitud->id, 4, '0', STR_PAD_LEFT) }}</td>
+                    <td>{{ $solicitud->office->name }}</td>
+                    <td>{{ $solicitud->user->name }}</td>
+                    <td>{{ ucfirst($solicitud->category->name) }}</td>
+                    <td>{{ $solicitud->quantity }}</td>
+                    <td class="text-slate-600">{{ $solicitud->created_at->format('d/m/Y H:i') }}</td>
+                    <td>
                         <x-ui.badge :type="$solicitud->status === 'pendiente' ? 'warning' : ($solicitud->status === 'aprobada' ? 'success' : ($solicitud->status === 'rechazada' ? 'danger' : 'neutral'))"
                                     :label="ucfirst($solicitud->status)" />
                     </td>
-                    <td class="px-4 py-3 text-right">
+                    <td class="text-right">
                         @if ($solicitud->status === 'pendiente')
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('solicitudes.show', $solicitud) }}" class="text-sm text-indigo-600 hover:text-indigo-800">Ver</a>
-                                <a href="{{ route('admin.solicitudes.form', $solicitud) }}" class="text-sm text-green-600 hover:text-green-800">Aprobar</a>
-                                <a href="{{ route('admin.solicitudes.formRechazar', $solicitud) }}" class="text-sm text-red-600 hover:text-red-800">Rechazar</a>
+                            <div class="flex items-center justify-end gap-3">
+                                <a href="{{ route('solicitudes.show', $solicitud) }}" class="link-action">Ver</a>
+                                <a href="{{ route('admin.solicitudes.form', $solicitud) }}" class="text-[13px] font-medium text-emerald-600 transition hover:text-emerald-800">Aprobar</a>
+                                <a href="{{ route('admin.solicitudes.formRechazar', $solicitud) }}" class="link-danger">Rechazar</a>
                             </div>
                         @else
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('solicitudes.show', $solicitud) }}" class="text-sm text-indigo-600 hover:text-indigo-800">Ver</a>
-                                <span class="text-sm text-slate-400">Procesada</span>
+                            <div class="flex items-center justify-end gap-3">
+                                <a href="{{ route('solicitudes.show', $solicitud) }}" class="link-action">Ver</a>
+                                <span class="text-[13px] text-slate-400">Procesada</span>
                             </div>
                         @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="px-4 py-8 text-center text-sm text-slate-500">
-                        No hay solicitudes en este estado.
-                    </td>
+                    <td colspan="8" class="empty-state">No hay solicitudes en este estado.</td>
                 </tr>
             @endforelse
             </tbody>

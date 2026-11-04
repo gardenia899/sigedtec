@@ -1,54 +1,56 @@
 <x-app-layout>
     <x-slot name="header">Reportes</x-slot>
 
-    <div class="mb-6">
-        <h2 class="text-lg font-semibold text-slate-800">Inventario</h2>
-        <p class="text-sm text-slate-500">Listado general de equipos.</p>
-    </div>
+    <x-ui.page-header title="Reporte de inventario" subtitle="Listado general de equipos registrados en el sistema.">
+        <a href="{{ route('reportes.inventario') }}" class="btn btn-outline">Limpiar filtros</a>
+    </x-ui.page-header>
 
-    <form method="GET" action="{{ route('reportes.inventario') }}" class="mb-6 grid gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-4">
-        <input type="text" name="q" value="{{ $filtros['q'] ?? '' }}" placeholder="Buscar código, marca o modelo" class="rounded-md border-slate-300 text-sm">
-        <select name="categoria" class="rounded-md border-slate-300 text-sm">
+    <form method="GET" action="{{ route('reportes.inventario') }}" class="filter-bar mt-6">
+        <input type="text" name="q" value="{{ $filtros['q'] ?? '' }}" placeholder="Buscar código, marca o modelo" class="field">
+        <select name="categoria" class="field-select">
             <option value="">Todas las categorías</option>
             @foreach ($categorias as $categoria)
                 <option value="{{ $categoria->id }}" @selected(($filtros['categoria'] ?? null) == $categoria->id)>{{ ucfirst($categoria->name) }}</option>
             @endforeach
         </select>
-        <select name="estado" class="rounded-md border-slate-300 text-sm">
+        <select name="estado" class="field-select">
             <option value="">Todos los estados</option>
             <option value="disponible" @selected(($filtros['estado'] ?? null) == 'disponible')>Disponible</option>
             <option value="asignado" @selected(($filtros['estado'] ?? null) == 'asignado')>Asignado</option>
             <option value="mantenimiento" @selected(($filtros['estado'] ?? null) == 'mantenimiento')>Mantenimiento</option>
         </select>
-        <div class="flex items-center gap-2">
-            <button class="rounded-md bg-slate-800 px-3 py-2 text-sm text-white">Filtrar</button>
-            <a href="{{ route('reportes.inventario') }}" class="text-sm text-slate-600">Limpiar</a>
-        </div>
+        <button class="btn btn-primary">
+            <x-ui.icon name="search" class="h-4 w-4" />
+            Filtrar
+        </button>
     </form>
 
-    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-        <table class="min-w-full text-sm">
+    <div class="table-wrap mt-6">
+        <table class="table-ui">
             <thead>
-            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                <th class="px-4 py-2.5">Código</th>
-                <th class="px-4 py-2.5">Categoría</th>
-                <th class="px-4 py-2.5">Marca / Modelo</th>
-                <th class="px-4 py-2.5">Serie</th>
-                <th class="px-4 py-2.5">Estado</th>
+            <tr>
+                <th>Código</th>
+                <th>Categoría</th>
+                <th>Marca / Modelo</th>
+                <th>Serie</th>
+                <th>Estado</th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody>
             @forelse ($equipos as $equipo)
                 <tr>
-                    <td class="px-4 py-3 font-mono text-xs text-slate-700">{{ $equipo->patrimonial_code }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ ucfirst($equipo->category->name ?? '—') }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $equipo->brand }} / {{ $equipo->model }}</td>
-                    <td class="px-4 py-3 text-slate-600">{{ $equipo->serial_number ?? '—' }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ ucfirst($equipo->status) }}</td>
+                    <td class="font-mono text-xs text-slate-600">{{ $equipo->patrimonial_code }}</td>
+                    <td>{{ ucfirst($equipo->category->name ?? '—') }}</td>
+                    <td>{{ $equipo->brand }} / {{ $equipo->model }}</td>
+                    <td class="text-slate-600">{{ $equipo->serial_number ?? '—' }}</td>
+                    <td>
+                        <x-ui.badge :type="$equipo->status === 'disponible' ? 'success' : ($equipo->status === 'asignado' ? 'info' : 'neutral')"
+                                    :label="$equipo->status === 'disponible' ? 'Disponible' : ($equipo->status === 'asignado' ? 'Asignado' : 'Mantenimiento')" />
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="px-4 py-8 text-center text-sm text-slate-500">No hay equipos.</td>
+                    <td colspan="5" class="empty-state">No hay equipos para los filtros seleccionados.</td>
                 </tr>
             @endforelse
             </tbody>

@@ -27,6 +27,8 @@ class CategoriaController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:80', 'unique:categories,name'],
             'description' => ['nullable', 'string', 'max:255'],
+            'spec_fields' => ['nullable', 'array'],
+            'spec_fields.*' => ['string', Rule::in(array_keys(Category::CAMPOS_TECNICOS))],
             'is_active' => ['nullable', 'boolean'],
         ], [
             'name.unique' => 'Ya existe una categoría con ese nombre.',
@@ -34,6 +36,7 @@ class CategoriaController extends Controller
         ]);
 
         $data['name'] = mb_strtolower(trim($data['name']));
+        $data['spec_fields'] = $this->camposSeleccionados($request);
         $data['is_active'] = $request->boolean('is_active', true);
 
         Category::create($data);
@@ -51,12 +54,15 @@ class CategoriaController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:80', Rule::unique('categories', 'name')->ignore($categoria->id)],
             'description' => ['nullable', 'string', 'max:255'],
+            'spec_fields' => ['nullable', 'array'],
+            'spec_fields.*' => ['string', Rule::in(array_keys(Category::CAMPOS_TECNICOS))],
             'is_active' => ['nullable', 'boolean'],
         ], [
             'name.unique' => 'Ya existe una categoría con ese nombre.',
         ]);
 
         $data['name'] = mb_strtolower(trim($data['name']));
+        $data['spec_fields'] = $this->camposSeleccionados($request);
         $data['is_active'] = $request->boolean('is_active');
 
         $categoria->update($data);
@@ -75,5 +81,18 @@ class CategoriaController extends Controller
         $mensaje = $categoria->is_active ? 'Categoría activada correctamente.' : 'Categoría desactivada correctamente.';
 
         return redirect()->route('categorias.index')->with('success', $mensaje);
+    }
+
+    /**
+     * Campos técnicos marcados, normalizados al orden del catálogo.
+     *
+     * @return list<string>
+     */
+    private function camposSeleccionados(Request $request): array
+    {
+        return array_values(array_intersect(
+            array_keys(Category::CAMPOS_TECNICOS),
+            array_map('strval', (array) $request->input('spec_fields', [])),
+        ));
     }
 }

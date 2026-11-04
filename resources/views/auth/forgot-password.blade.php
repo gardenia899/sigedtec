@@ -1,25 +1,36 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+    <div class="text-center">
+        <h2 class="text-2xl font-bold tracking-tight text-white">Recuperar <span class="text-sky-400">contraseña</span></h2>
+        <p class="mt-1.5 text-[13px] leading-relaxed text-slate-400">
+            Indícanos tu correo institucional y te enviaremos un enlace para restablecerla.
+        </p>
     </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <x-auth-session-status class="mt-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('password.email') }}">
+    <form method="POST" action="{{ route('password.email') }}" class="mt-6 space-y-4">
         @csrf
 
-        <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <label for="email" class="sr-only">Correo institucional</label>
+            <div class="auth-field">
+                <x-ui.icon name="file-text" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                <input id="email" name="email" type="email" value="{{ old('email') }}"
+                       class="auth-input" placeholder="Correo institucional"
+                       required autofocus autocomplete="username">
+            </div>
+            @error('email')
+                <p class="mt-1.5 text-xs text-rose-300">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" class="auth-btn-primary">
+            <x-ui.icon name="arrow-right" class="h-5 w-5" />
+            Enviar enlace
+        </button>
     </form>
+
+    <div class="mt-5 text-center">
+        <a href="{{ route('login') }}" class="auth-link">Volver al inicio de sesión</a>
+    </div>
 </x-guest-layout>

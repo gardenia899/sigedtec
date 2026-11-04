@@ -1,53 +1,52 @@
 <x-app-layout>
     <x-slot name="header">Reportes</x-slot>
 
-    <div class="mb-6">
-        <h2 class="text-lg font-semibold text-slate-800">Historial de asignaciones</h2>
-        <p class="text-sm text-slate-500">Equipos asignados por solicitud.</p>
-    </div>
+    <x-ui.page-header title="Historial de asignaciones" subtitle="Equipos entregados por solicitud, con su responsable.">
+        <a href="{{ route('reportes.asignaciones') }}" class="btn btn-outline">Limpiar filtros</a>
+    </x-ui.page-header>
 
-    <form method="GET" action="{{ route('reportes.asignaciones') }}" class="mb-6 grid gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-4">
-        <select name="oficina" class="rounded-md border-slate-300 text-sm">
+    <form method="GET" action="{{ route('reportes.asignaciones') }}" class="filter-bar mt-6 md:grid-cols-4">
+        <select name="oficina" class="field-select">
             <option value="">Todas las oficinas</option>
             @foreach ($oficinas as $oficina)
                 <option value="{{ $oficina->id }}" @selected(($filtros['oficina'] ?? null) == $oficina->id)>{{ $oficina->name }}</option>
             @endforeach
         </select>
-        <input type="date" name="desde" value="{{ $filtros['desde'] ?? '' }}" class="rounded-md border-slate-300 text-sm">
-        <input type="date" name="hasta" value="{{ $filtros['hasta'] ?? '' }}" class="rounded-md border-slate-300 text-sm">
-        <div class="flex items-center gap-2">
-            <button class="rounded-md bg-slate-800 px-3 py-2 text-sm text-white">Filtrar</button>
-            <a href="{{ route('reportes.asignaciones') }}" class="text-sm text-slate-600">Limpiar</a>
-        </div>
+        <input type="date" name="desde" value="{{ $filtros['desde'] ?? '' }}" class="field" aria-label="Desde">
+        <input type="date" name="hasta" value="{{ $filtros['hasta'] ?? '' }}" class="field" aria-label="Hasta">
+        <button class="btn btn-primary">
+            <x-ui.icon name="search" class="h-4 w-4" />
+            Filtrar
+        </button>
     </form>
 
-    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-        <table class="min-w-full text-sm">
+    <div class="table-wrap mt-6">
+        <table class="table-ui">
             <thead>
-            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                <th class="px-4 py-2.5">Fecha</th>
-                <th class="px-4 py-2.5">Solicitud</th>
-                <th class="px-4 py-2.5">Oficina</th>
-                <th class="px-4 py-2.5">Solicitante</th>
-                <th class="px-4 py-2.5">Categoría</th>
-                <th class="px-4 py-2.5">Equipo</th>
-                <th class="px-4 py-2.5">Asignado por</th>
+            <tr>
+                <th>Fecha</th>
+                <th>Solicitud</th>
+                <th>Oficina</th>
+                <th>Solicitante</th>
+                <th>Categoría</th>
+                <th>Equipo</th>
+                <th>Asignado por</th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody>
             @forelse ($items as $item)
                 <tr>
-                    <td class="px-4 py-3 text-slate-600">{{ $item->created_at->format('d/m/Y H:i') }}</td>
-                    <td class="px-4 py-3 text-slate-600">#{{ $item->request_id }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $item->request->office->name }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $item->request->user->name }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ ucfirst($item->request->category->name) }}</td>
-                    <td class="px-4 py-3 text-slate-700">{{ $item->equipment->patrimonial_code }} - {{ $item->equipment->brand }} {{ $item->equipment->model }}</td>
-                    <td class="px-4 py-3 text-slate-600">{{ $item->assignedBy->name }}</td>
+                    <td class="text-slate-600">{{ $item->created_at->format('d/m/Y H:i') }}</td>
+                    <td class="font-mono text-xs text-slate-500">#{{ str_pad($item->request_id, 4, '0', STR_PAD_LEFT) }}</td>
+                    <td>{{ $item->request->office->name }}</td>
+                    <td>{{ $item->request->user->name }}</td>
+                    <td>{{ ucfirst($item->request->category->name) }}</td>
+                    <td class="text-slate-600">{{ $item->equipment->patrimonial_code }} · {{ $item->equipment->brand }} {{ $item->equipment->model }}</td>
+                    <td class="text-slate-600">{{ $item->assignedBy->name }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="px-4 py-8 text-center text-sm text-slate-500">No hay asignaciones.</td>
+                    <td colspan="7" class="empty-state">No hay asignaciones para los filtros seleccionados.</td>
                 </tr>
             @endforelse
             </tbody>

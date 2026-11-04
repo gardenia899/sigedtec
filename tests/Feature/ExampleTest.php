@@ -12,9 +12,11 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
-        // Los visitantes sin sesión son redirigidos al login (RN-01)
+        // La portada pública presenta el sistema; las rutas privadas siguen exigiendo sesión (RN-01)
         $response = $this->get('/');
 
-        $response->assertRedirect(route('login'));
+        $response->assertOk();
+        $response->assertSee('Bienvenido a');
+        $response->assertSee('SigedTec');
     }
 }

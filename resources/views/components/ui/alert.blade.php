@@ -3,25 +3,27 @@
 @php
     // Paleta del Design System §20.2: el color siempre va acompañado de texto.
     $estilos = [
-        'success' => 'border-green-200 bg-green-50 text-green-800',
+        'success' => 'border-emerald-200 bg-emerald-50 text-emerald-800',
         'warning' => 'border-amber-200 bg-amber-50 text-amber-800',
-        'danger'  => 'border-red-200 bg-red-50 text-red-800',
+        'danger'  => 'border-rose-200 bg-rose-50 text-rose-800',
         'info'    => 'border-sky-200 bg-sky-50 text-sky-800',
     ];
-    $puntos = [
-        'success' => 'bg-green-500',
-        'warning' => 'bg-amber-500',
-        'danger'  => 'bg-red-500',
-        'info'    => 'bg-sky-500',
+    $iconos = [
+        'success' => 'shield',
+        'warning' => 'bolt',
+        'danger'  => 'bell',
+        'info'    => 'file-text',
     ];
 @endphp
 
-<div {{ $attributes->merge(['class' => 'flex gap-3 rounded-lg border p-4 text-sm '.$estilos[$type]]) }} role="alert">
-    <span class="mt-1 h-2 w-2 shrink-0 rounded-full {{ $puntos[$type] }}" aria-hidden="true"></span>
-    <div class="flex-1">
+<div {{ $attributes->merge(['class' => 'flex gap-3 rounded-xl border p-3.5 text-sm shadow-card '.$estilos[$type]]) }} role="alert">
+    <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/70">
+        <x-ui.icon :name="$iconos[$type]" class="h-4 w-4" />
+    </span>
+    <div class="min-w-0 flex-1">
         @if ($title)
             <p class="font-semibold">{{ $title }}</p>
         @endif
-        <div class="{{ $title ? 'mt-1' : '' }}">{{ $slot }}</div>
+        <div class="{{ $title ? 'mt-0.5' : '' }}">{{ $slot }}</div>
     </div>
 </div>

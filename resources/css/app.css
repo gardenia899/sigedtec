@@ -1,3 +1,208 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        @apply bg-page text-ink;
+    }
+
+    /* Evita el parpadeo de Alpine antes de inicializar */
+    [x-cloak] {
+        display: none !important;
+    }
+
+    ::selection {
+        @apply bg-primary-600/20;
+    }
+}
+
+@layer components {
+    /* ── Pantallas de autenticación (superficie oscura) — SDD §20.8 ───────── */
+    .auth-field {
+        @apply relative;
+    }
+
+    .auth-input {
+        @apply h-12 w-full rounded-xl border border-white/10 bg-white/[0.04] pl-11 pr-4 text-sm text-white placeholder:text-slate-400 shadow-none transition
+            focus:border-sky-400 focus:bg-white/[0.07] focus:ring-2 focus:ring-sky-500/30;
+    }
+
+    .auth-input-plain {
+        @apply pl-4;
+    }
+
+    .auth-input-toggle {
+        @apply pr-12;
+    }
+
+    .auth-select {
+        @apply h-12 w-full rounded-xl border border-white/10 bg-[#0B2038] px-4 text-sm text-white shadow-none
+            focus:border-sky-400 focus:ring-2 focus:ring-sky-500/30;
+    }
+
+    .auth-select option {
+        @apply bg-[#0B2038] text-white;
+    }
+
+    .auth-check {
+        @apply h-4 w-4 rounded border-white/30 bg-transparent text-primary-500
+            focus:ring-2 focus:ring-sky-500/40 focus:ring-offset-0;
+    }
+
+    .auth-btn-primary {
+        @apply flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600
+            text-sm font-semibold text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.95)] transition
+            hover:from-blue-400 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-[#081A34]
+            disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .auth-btn-outline {
+        @apply flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-white/25 text-sm font-semibold text-white transition
+            hover:border-white/50 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-[#081A34];
+    }
+
+    .auth-link {
+        @apply text-sm font-medium text-sky-300 transition hover:text-sky-200 hover:underline;
+    }
+
+    /* ── Barra lateral (SDD §20.4) ────────────────────────────────────────── */
+    .nav-item {
+        @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 transition
+            hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400;
+    }
+
+    .nav-item-active {
+        @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-nav;
+    }
+
+    .nav-subitem {
+        @apply flex items-center gap-2 rounded-lg py-2 pl-10 pr-3 text-[13px] font-medium text-slate-400 transition
+            hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400;
+    }
+
+    .nav-subitem-active {
+        @apply text-sky-300;
+    }
+
+    /* ── Tarjetas de contenido ────────────────────────────────────────────── */
+    .panel {
+        @apply rounded-xl border border-slate-200 bg-white shadow-card;
+    }
+
+    .panel-head {
+        @apply flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3.5;
+    }
+
+    .panel-title {
+        @apply flex items-center gap-2 text-sm font-semibold text-slate-800;
+    }
+
+    /* ── Encabezados de página ────────────────────────────────────────────── */
+    .page-title {
+        @apply text-xl font-bold tracking-tight text-slate-900;
+    }
+
+    .page-sub {
+        @apply mt-1 text-[13px] text-slate-500;
+    }
+
+    /* ── Botones (superficie clara) ───────────────────────────────────────── */
+    .btn {
+        @apply inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg px-4 text-[13px] font-semibold transition
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .btn-primary {
+        @apply bg-blue-600 text-white shadow-[0_12px_24px_-16px_rgba(37,99,235,0.95)] hover:bg-blue-700 focus-visible:ring-blue-500;
+    }
+
+    .btn-outline {
+        @apply border border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50 focus-visible:ring-slate-400;
+    }
+
+    .btn-ghost {
+        @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-slate-300;
+    }
+
+    .btn-danger {
+        @apply border border-rose-200 bg-white text-rose-600 hover:bg-rose-50 focus-visible:ring-rose-400;
+    }
+
+    .btn-sm {
+        @apply h-8 rounded-lg px-3 text-xs;
+    }
+
+    /* ── Formularios (superficie clara) ───────────────────────────────────── */
+    .label-ui {
+        @apply mb-1.5 block text-[13px] font-medium text-slate-700;
+    }
+
+    .field {
+        @apply h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-[13px] text-slate-800 placeholder:text-slate-400 shadow-none transition
+            focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20;
+    }
+
+    .field-select {
+        @apply h-10 w-full rounded-lg border border-slate-300 bg-white pl-3 pr-8 text-[13px] text-slate-800 shadow-none transition
+            focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20;
+    }
+
+    .field-area {
+        @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] text-slate-800 placeholder:text-slate-400 shadow-none transition
+            focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20;
+    }
+
+    .field-error {
+        @apply mt-1.5 text-xs font-medium text-rose-600;
+    }
+
+    .filter-bar {
+        @apply grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-card md:grid-cols-4;
+    }
+
+    /* ── Tablas de datos (§20.10) ─────────────────────────────────────────── */
+    .table-wrap {
+        @apply overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-card;
+    }
+
+    .table-ui {
+        @apply min-w-full text-[13px];
+    }
+
+    .table-ui thead tr {
+        @apply border-b border-slate-200 bg-slate-50/80 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500;
+    }
+
+    .table-ui th {
+        @apply whitespace-nowrap px-4 py-3;
+    }
+
+    .table-ui tbody {
+        @apply divide-y divide-slate-100;
+    }
+
+    .table-ui td {
+        @apply px-4 py-3 align-middle text-slate-700;
+    }
+
+    .table-ui tbody tr:hover {
+        @apply bg-slate-50/70;
+    }
+
+    .empty-state {
+        @apply px-4 py-10 text-center text-sm text-slate-500;
+    }
+
+    .link-action {
+        @apply text-[13px] font-medium text-blue-600 transition hover:text-blue-800;
+    }
+
+    .link-danger {
+        @apply text-[13px] font-medium text-rose-600 transition hover:text-rose-800;
+    }
+}

@@ -41,7 +41,7 @@ class EquipoController extends Controller
 
         return view('equipos.index', [
             'equipos' => $query->paginate(15)->withQueryString(),
-            'categorias' => Category::orderBy('name')->get(),
+            'categorias' => Category::orderBy('name')->get(['id', 'name']),
             'filtros' => $request->only(['categoria', 'estado', 'q', 'eliminados']),
         ]);
     }
@@ -49,7 +49,7 @@ class EquipoController extends Controller
     public function create(): View
     {
         return view('equipos.create', [
-            'categorias' => Category::activas()->orderBy('name')->get(),
+            'categorias' => Category::activas()->orderBy('name')->get(['id', 'name', 'spec_fields']),
         ]);
     }
 
@@ -74,6 +74,8 @@ class EquipoController extends Controller
             'category_id.required' => 'Debes seleccionar una categoría.',
         ]);
 
+        $data = $this->soloCamposDeLaCategoria(Category::findOrFail($data['category_id']), $data);
+
         DB::transaction(function () use ($data, $request) {
             $equipo = Equipment::create($data);
 
@@ -94,7 +96,7 @@ class EquipoController extends Controller
     {
         return view('equipos.edit', [
             'equipo' => $equipo,
-            'categorias' => Category::orderBy('name')->get(),
+            'categorias' => Category::orderBy('name')->get(['id', 'name', 'spec_fields']),
         ]);
     }
 
@@ -117,9 +119,29 @@ class EquipoController extends Controller
             'serial_number.unique' => 'Este número de serie ya está registrado.',
         ]);
 
+        $data = $this->soloCamposDeLaCategoria(Category::findOrFail($data['category_id']), $data);
+
         $equipo->update($data);
 
         return redirect()->route('equipos.index')->with('success', 'Equipo actualizado correctamente.');
+    }
+
+    /**
+     * Descarta las especificaciones que no aplican a la categoría elegida,
+     * para que un equipo no conserve RAM o almacenamiento al cambiar de tipo.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function soloCamposDeLaCategoria(Category $categoria, array $data): array
+    {
+        foreach (array_keys(Category::CAMPOS_TECNICOS) as $campo) {
+            if (! $categoria->requiereCampo($campo)) {
+                $data[$campo] = null;
+            }
+        }
+
+        return $data;
     }
 
     public function destroy(Equipment $equipo): RedirectResponse

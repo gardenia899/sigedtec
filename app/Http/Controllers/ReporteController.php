@@ -15,7 +15,7 @@ class ReporteController extends Controller
 {
     public function inventario(Request $request): View
     {
-        $query = Equipment::with('category')->orderBy('patrimonial_code');
+        $query = Equipment::with('category:id,name')->orderBy('patrimonial_code');
 
         if ($request->filled('categoria')) {
             $query->where('category_id', $request->categoria);
@@ -36,14 +36,14 @@ class ReporteController extends Controller
 
         return view('reportes.inventario', [
             'equipos' => $query->paginate(20)->withQueryString(),
-            'categorias' => Category::orderBy('name')->get(),
+            'categorias' => Category::orderBy('name')->get(['id', 'name']),
             'filtros' => $request->only(['categoria', 'estado', 'q']),
         ]);
     }
 
     public function solicitudes(Request $request): View
     {
-        $query = EquipmentRequest::with(['office', 'category', 'user'])
+        $query = EquipmentRequest::with(['office:id,name', 'category:id,name', 'user:id,name'])
             ->orderByDesc('created_at');
 
         if ($request->filled('estado')) {
@@ -56,15 +56,21 @@ class ReporteController extends Controller
 
         return view('reportes.solicitudes', [
             'solicitudes' => $query->paginate(20)->withQueryString(),
-            'oficinas' => Office::orderBy('name')->get(),
+            'oficinas' => Office::orderBy('name')->get(['id', 'name']),
             'filtros' => $request->only(['estado', 'oficina']),
         ]);
     }
 
     public function asignaciones(Request $request): View
     {
-        $query = RequestItem::with(['request.office', 'request.category', 'request.user', 'equipment', 'assignedBy'])
-            ->orderByDesc('created_at');
+        $query = RequestItem::with([
+            'request:id,office_id,user_id,category_id',
+            'request.office:id,name',
+            'request.category:id,name',
+            'request.user:id,name',
+            'equipment:id,patrimonial_code,brand,model',
+            'assignedBy:id,name',
+        ])->orderByDesc('created_at');
 
         if ($request->filled('oficina')) {
             $query->whereHas('request', fn ($q) => $q->where('office_id', $request->oficina));
@@ -80,7 +86,7 @@ class ReporteController extends Controller
 
         return view('reportes.asignaciones', [
             'items' => $query->paginate(20)->withQueryString(),
-            'oficinas' => Office::orderBy('name')->get(),
+            'oficinas' => Office::orderBy('name')->get(['id', 'name']),
             'filtros' => $request->only(['oficina', 'desde', 'hasta']),
         ]);
     }

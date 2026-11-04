@@ -1,27 +1,30 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+    <div class="text-center">
+        <h2 class="text-2xl font-bold tracking-tight text-white">Confirmar <span class="text-sky-400">contraseña</span></h2>
+        <p class="mt-1.5 text-[13px] leading-relaxed text-slate-400">
+            Esta es un área segura. Confirma tu contraseña para continuar.
+        </p>
     </div>
 
-    <form method="POST" action="{{ route('password.confirm') }}">
+    <form method="POST" action="{{ route('password.confirm') }}" class="mt-6 space-y-4">
         @csrf
 
-        <!-- Password -->
         <div>
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <label for="password" class="sr-only">Contraseña</label>
+            <div class="auth-field">
+                <x-ui.icon name="lock" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                <input id="password" name="password" type="password"
+                       class="auth-input" placeholder="Contraseña"
+                       required autocomplete="current-password">
+            </div>
+            @error('password')
+                <p class="mt-1.5 text-xs text-rose-300">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
-                {{ __('Confirm') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" class="auth-btn-primary">
+            <x-ui.icon name="shield" class="h-5 w-5" />
+            Confirmar
+        </button>
     </form>
 </x-guest-layout>
