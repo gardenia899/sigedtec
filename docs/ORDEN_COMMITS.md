@@ -39,6 +39,8 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 29 | 2026-11-05 | `docs: actualizar estado backend y frontend` | Se documentan las especificaciones por categoría, la portada pública y las optimizaciones |
 | 30 | 2026-11-05 | `feat: agregar pantalla de carga y corregir detalles de interfaz` | Pantalla de carga en los tres layouts, icono de retroceso, cambio de rol con el design system y .gitignore para archivos de instrucciones de IA |
 | 31 | 2026-11-05 | `docs: actualizar orden de commits y detalles del sistema` | Se documentan la pantalla de carga, la portada, las especificaciones por categoría y los índices |
+| 32 | 2026-11-05 | `refactor: mover validaciones a Form Requests por módulo` | Una clase por módulo para alta y edición; se corrigen los campos protegidos que no se guardaban y se agrega prueba de los formularios |
+| 33 | 2026-11-05 | `docs: documentar Form Requests y campos protegidos` | Se detalla la validación por módulo y qué campos fija el servidor |
 
 
 ## Pendientes por hacer

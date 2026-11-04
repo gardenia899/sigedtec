@@ -1097,18 +1097,24 @@ Convención: instantes `timestamptz`; las 7 tablas tienen `created_at` y `update
 
 ### 19.3 Form Requests
 
-| Form Request | `authorize()` | Reglas principales | Notas |
-| --- | --- | --- | --- |
-| `StoreEquipoRequest` | Rol `admin` | `patrimonial_code required string max:20 unique:equipment,patrimonial_code`; `category_id exists:categories,id`; `status in:disponible,mantenimiento` (alta sin 'asignado'); `ram_gb nullable integer min:1 max:1024`; `storage_type nullable in:…`; `serial_number nullable unique con whereNull deleted_at` | Validación de formato; no toca negocio |
-| `UpdateEquipoRequest` | Rol `admin` | Igual con `->ignore($equipo)`; `status in:` los 3 estados | La transición válida se revalida en controlador/action (RN‑08) |
-| `StoreSolicitudRequest` | Rol `solicitante` | `category_id required exists:categories,id` + verificación de categoría activa en `withValidator`; `quantity required integer min:1 max:1000`; `justification required string min:10 max:1000` | **No** acepta `status`, `office_id`, `user_id` |
-| `AprobarSolicitudRequest` | Rol `admin` **y** `$solicitud->status === 'pendiente'` | `equipment_ids required array`; `equipment_ids.* exists:equipment,id`; tamaño exacto validado en el action (no aquí, porque depende de `quantity`) | El tamaño exacto es negocio, vive en la transacción |
-| `RechazarSolicitudRequest` | Rol `admin` y solicitud `pendiente` | `admin_observation required string min:5 max:1000` | RN‑18 |
-| `CancelarSolicitudRequest` | Rol `solicitante`, solicitud propia y `pendiente` | (sin campos; solo confirmación) | 409 si cambió de estado |
-| `StoreOficinaRequest` / `UpdateOficinaRequest` | Rol `admin` | `code unique`, `name unique`, `is_active boolean` | — |
-| `StoreCategoriaRequest` / `UpdateCategoriaRequest` | Rol `admin` | `name required max:80` + unique ignorando mayúsculas (`Rule::unique()->where(fn)` con `LOWER`) | Evita "Laptop" vs "laptop" |
+Una clase por módulo, usada por el alta y la edición cuando ambas comparten reglas. Así una regla se cambia en un solo archivo y no hay dos listas de validación que se desincronicen.
 
-**División de responsabilidades (importante):** el Form Request valida *forma y permiso*; la **disponibilidad, pertenencia de categoría y cantidad exacta** se revalidan dentro de la transacción con `FOR UPDATE`, porque pueden cambiar entre el envío del formulario y el commit.
+| Form Request | Dónde se usa | Reglas principales | Notas |
+| --- | --- | --- | --- |
+| `EquipoRequest` | `store` y `update` de equipos | `patrimonial_code` requerido, máx. 20 y único ignorando el propio equipo al editar; `category_id` existente y activa solo en el alta; `serial_number` único entre equipos no dados de baja; `status` requerido únicamente en el alta | El estado no se edita desde el formulario: se cambia desde el listado para que quede historial |
+| `CambioEstadoEquipoRequest` | `cambiarEstado` | `status` dentro de los tres estados; `notes` opcional, máx. 255 | La bitácora la escribe el controlador en su transacción |
+| `CategoriaRequest` | `store` y `update` de categorías | `name` requerido, máx. 80 y único ignorando la propia categoría; `spec_fields.*` limitado al catálogo `Category::CAMPOS_TECNICOS` | El controlador normaliza el nombre a minúsculas y ordena los campos técnicos |
+| `OficinaRequest` | `store` y `update` de oficinas | `code` (máx. 10) y `name` (máx. 120) únicos, ignorando la propia oficina; `location` opcional | — |
+| `UsuarioRequest` | cambio de rol | `role` limitado a los dos roles del sistema | El bloqueo del propio rol se comprueba en el controlador, después de validar |
+| `SolicitudRequest` | alta de solicitud | `category_id` existente; `quantity` entre 1 y 50; `justification` entre 10 y 1000 caracteres | Que la categoría siga activa se avisa con mensaje, no como error de campo |
+| `AprobarSolicitudRequest` | aprobación en despacho | `equipos` con exactamente los elementos que pide la solicitud; cada uno debe existir | El tamaño exigido sale de la propia solicitud, no del formulario |
+| `RechazarSolicitudRequest` | rechazo en despacho | `admin_observation` obligatorio, entre 5 y 500 caracteres | RN‑18 |
+
+No se define `authorize()` en estos Form Requests: la autorización sigue en los middlewares de ruta (`auth`, `role:admin`, `role:solicitante`) y en las comprobaciones de propiedad de cada consulta, para no duplicar la misma regla en dos capas.
+
+**División de responsabilidades (importante):** el Form Request valida *forma*; la **disponibilidad, pertenencia de categoría y cantidad exacta** se revalidan dentro de la transacción con `FOR UPDATE`, porque pueden cambiar entre el envío del formulario y el commit.
+
+**Campos que no vienen del cliente:** `role`, `status`, `processed_by`, `processed_at` y `admin_observation` están fuera de `$fillable` a propósito. El controlador los asigna de forma explícita y luego guarda, de modo que un `update()` masivo nunca pueda cambiar el resultado de una solicitud ni el rol de un usuario.
 
 ### 19.4 Manejo de errores y excepciones
 
