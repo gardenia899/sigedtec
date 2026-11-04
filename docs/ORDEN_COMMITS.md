@@ -37,6 +37,8 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 27 | 2026-11-05 | `feat: rediseñar la interfaz y adaptar las especificaciones a cada categoría` | Portada pública, design system en todos los módulos, especificaciones técnicas según la categoría del equipo y catálogo de 14 tipos de aparato |
 | 28 | 2026-11-05 | `perf: indexar las consultas mas usadas y limitar columnas en los listados` | Índices para panel, bandeja y reportes; columnas explícitas en los listados y paginación que conserva el filtro |
 | 29 | 2026-11-05 | `docs: actualizar estado backend y frontend` | Se documentan las especificaciones por categoría, la portada pública y las optimizaciones |
+| 30 | 2026-11-05 | `feat: agregar pantalla de carga y corregir detalles de interfaz` | Pantalla de carga en los tres layouts, icono de retroceso, cambio de rol con el design system y .gitignore para archivos de instrucciones de IA |
+| 31 | 2026-11-05 | `docs: actualizar orden de commits y detalles del sistema` | Se documentan la pantalla de carga, la portada, las especificaciones por categoría y los índices |
 
 
 ## Pendientes por hacer

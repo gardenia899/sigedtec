@@ -193,6 +193,7 @@ Prioridad: **O** = obligatorio, **C** = condicional (requiere aprobación), **D*
 | RF‑10 | CRUD de categorías con nombre único (case-insensitive) y descripción. | O |
 | RF‑11 | Desactivar categoría impide usarla en nuevas solicitudes y nuevos equipos, sin afectar registros existentes. | O |
 | RF‑12 | Una categoría con equipos asociados **no se elimina físicamente** (FK `RESTRICT`); solo se desactiva. | O |
+| RF‑12b | Cada categoría define qué especificaciones técnicas se piden al registrar un equipo: procesador, RAM, capacidad y tipo de almacenamiento. El formulario muestra solo las de la categoría elegida y el servidor descarta las demás. | O |
 
 ### M4 — Inventario
 
@@ -1037,6 +1038,7 @@ Convención: instantes `timestamptz`; las 7 tablas tienen `created_at` y `update
 | Método | Ruta | Nombre | Controlador@acción | Middlewares |
 | --- | --- | --- | --- | --- |
 | GET | `/dashboard` | `dashboard` | `DashboardController@index` | `auth` |
+| GET | `/` | `home` | Portada pública para invitados; con sesión redirige a `dashboard` | — |
 | GET/POST | `/login` | `login` | Breeze | `guest`, `throttle:6,1` |
 | GET/POST | `/register` | `register` | Breeze (adaptado) | `guest` |
 | POST | `/logout` | `logout` | Breeze | `auth` |
@@ -1181,11 +1183,13 @@ flowchart LR
     SB --> MAIN
 ```
 
-- **Barra lateral:** identidad SIGEDTEC, accesos según permisos (§20.11), pie con usuario y "Cerrar sesión". Fija en desktop; en `< lg` colapsa a menú desplegable (botón hamburguesa en la topbar) con Alpine (ya incluido con Breeze) — sin dependencias JS nuevas.
+- **Barra lateral:** identidad SIGEDTEC, accesos según permisos (§20.11) y pie con la versión del sistema. "Mi perfil" y "Cerrar sesión" quedan en el menú del avatar de la barra superior, para no duplicar acciones en dos lugares. Fija en desktop; en `< lg` colapsa a menú desplegable (botón hamburguesa en la topbar) con Alpine (ya incluido con Breeze) — sin dependencias JS nuevas.
 - **Barra superior:** título o contexto de navegación, nombre/rol del usuario y acción global si aporta.
 - **Contenido:** `x-ui.page-header` (título + descripción + acciones) y luego el bloque del módulo.
 - **Notificaciones:** flash de sesión (`success`/`error`) renderizados con `x-ui.alert` al tope del contenido.
 - **Pantallas de autenticación:** layout independiente `x-layouts.guest` (tarjeta centrada sobre `bg-page`) con la misma identidad.
+- **Portada pública:** layout `x-layouts.site` con navegación, secciones informativas y pie institucional; es la única pantalla fuera del shell autenticado.
+- **Pantalla de carga:** `x-ui.loading` cubre la pantalla con el logo al abrir una página, enviar un formulario o seguir un enlace interno, y se retira al terminar la carga. Solo anima el indicador cuando el usuario no pidió menos movimiento (`motion-safe`).
 - Sin scroll horizontal en ningún tamaño ≥ 360 px.
 
 ### 20.5 Estructura común de páginas de gestión
@@ -1222,6 +1226,13 @@ Todos en `resources/views/components/` con la convención `x-ui.*` / `x-layouts.
 | `x-ui.empty-state` | `title`, `message`, `action` | Sin resultados / primer uso |
 | `x-ui.pagination` | `:paginator` | Paginación de Laravel uniforme |
 | `x-ui.page-header` | `title`, `description`, slot `actions` | Cabecera de página |
+| `x-ui.icon` | `name` | Set de iconos SVG inline, sin librerías |
+| `x-ui.loading` | — | Pantalla de carga a pantalla completa |
+| `x-ui.hero` | `title`, `subtitle` | Banner de bienvenida del panel |
+| `x-ui.tech-scene` | — | Ilustración del equipo de escritorio en auth y portada |
+| `x-layouts.site` | slot | Shell de la portada pública |
+
+**Estado de implementación:** los controles (`button`, `input`, `select`, `textarea`, `label`, error) se resolvieron con las clases `.btn`, `.btn-primary`, `.btn-outline`, `.btn-ghost`, `.btn-danger`, `.btn-sm`, `.field`, `.field-select`, `.field-area`, `.label-ui` y `.field-error` definidas en `resources/css/app.css`, reutilizadas también por los componentes de Breeze ya reestilizados (`x-text-input`, `x-input-label`, `x-input-error`). Así no conviven dos estilos de campo en el sistema.
 
 **Compatibilidad con Breeze:** Breeze trae `x-guest-layout`, `x-auth-card`, `x-input-label`, `x-text-input`, `x-input-error`, `x-primary-button`. *Decisión:* conservar esos archivos como **alias internos** que heredan los tokens del Design System (mismo aspecto), o reemplazar su uso en las vistas de auth por `x-ui.*`. Prohibido tener dos estilos de "input" distintos: si los de Breeze se quedan, se reestilizan con los mismos tokens.
 
@@ -1350,8 +1361,8 @@ Los tokens en `tailwind.config.js` y los componentes en `components/ui/` son el 
 | --- | --- |
 | N+1 | Eager loading obligatorio con `with()` en todos los listados (tabla en §17). Regla de revisión: `->relación->campo` dentro de `@foreach` sin `with()` = incumplimiento (CA‑13) |
 | Paginación | `paginate(15)` en todos los listados y reportes, con `withQueryString()` para conservar filtros |
-| Índices | `equipment(patrimonial_code)` UNIQUE · `equipment(category_id)` · `equipment(serial_number)` parcial · `equipment_requests(status)`, `(office_id)`, `(created_at)` · `request_items(equipment_id)` parcial · `status_history(equipment_id, created_at)` · `users(email)` UNIQUE · `users(office_id)` · `users(role)` |
-| Dashboard | Contadores con `count()` sobre índices (filas < 10⁵ ⇒ milisegundos); distribución por categoría con `withCount` en una sola consulta; sin consultas dentro de bucles |
+| Índices | `equipment(patrimonial_code)` UNIQUE · `equipment(category_id)` · `equipment(status, category_id)` · `equipment(serial_number)` parcial · `equipment_requests(status)`, `(office_id)`, `(created_at)`, `(user_id, status)`, `(status, created_at)` · `request_items(equipment_id)` parcial, `(created_at)` · `status_history(equipment_id, created_at)`, `(created_at)` · `users(email)` UNIQUE · `users(office_id)` · `users(role)` |
+| Dashboard | Contadores con una sola agregación `GROUP BY status` por tabla, no una consulta por estado; distribución por categoría con `withCount`, ordenada y limitada a las seis categorías que muestra el panel; sin consultas dentro de bucles |
 | Carga selectiva | `select(['id','patrimonial_code',…])` en listados amplios para no traer `observations`/`justification` en tablas |
 | Agregaciones SQL | Reportes y resúmenes con `groupBy`, `selectRaw`, `count()` — no PHP sobre colecciones |
 | Filtros | Scopes encadenables (`scopeFiltrar($q, $request)`) que solo agregan `where` cuando el parámetro existe |
