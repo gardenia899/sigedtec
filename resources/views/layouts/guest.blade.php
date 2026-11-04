@@ -12,6 +12,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-[#040D1C] font-sans text-slate-100 antialiased">
+<x-ui.loading />
 <div class="relative flex min-h-screen flex-col overflow-hidden">
 
     {{-- Fondo: malla azul institucional (SDD §20.2) --}}

@@ -11,6 +11,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-page font-sans text-ink antialiased">
+    <x-ui.loading />
     <header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur">
         <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
             <a href="{{ url('/') }}" class="flex items-center gap-3">

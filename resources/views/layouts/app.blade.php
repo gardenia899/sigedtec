@@ -12,6 +12,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-page font-sans text-ink antialiased">
+<x-ui.loading />
 @php
     $usuario = auth()->user();
     $esAdmin = $usuario?->isAdmin() ?? false;

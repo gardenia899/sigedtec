@@ -22,3 +22,12 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Instrucciones para asistentes de IA: no se versionan
+AGENTS.md
+CLAUDE.md
+.cursorrules
+.windsurfrules
+.clinerules
+.cursor/
+.github/copilot-instructions.md

@@ -81,6 +81,10 @@
             <path d="M4.5 12h15"/><path d="m13.5 6 6 6-6 6"/>
             @break
 
+        @case('arrow-left')
+            <path d="M19.5 12h-15"/><path d="m10.5 6-6 6 6 6"/>
+            @break
+
         @case('plus')
             <path d="M12 4.5v15M4.5 12h15"/>
             @break
