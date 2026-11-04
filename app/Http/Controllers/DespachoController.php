@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AprobarSolicitudRequest;
+use App\Http\Requests\RechazarSolicitudRequest;
 use App\Models\Equipment;
 use App\Models\EquipmentRequest;
 use App\Models\RequestItem;
@@ -53,16 +55,11 @@ class DespachoController extends Controller
         return view('despacho.aprobar', compact('solicitud', 'equipos'));
     }
 
-    public function aprobar(Request $request, EquipmentRequest $solicitud): RedirectResponse
+    public function aprobar(AprobarSolicitudRequest $request, EquipmentRequest $solicitud): RedirectResponse
     {
         if ($solicitud->status !== 'pendiente') {
             return redirect()->route('admin.solicitudes.index')->with('error', 'Esta solicitud ya fue procesada.');
         }
-
-        $request->validate([
-            'equipos' => ['required', 'array', 'min:' . $solicitud->quantity, 'max:' . $solicitud->quantity],
-            'equipos.*' => ['integer', 'exists:equipment,id'],
-        ]);
 
         try {
             DB::transaction(function () use ($request, $solicitud) {
@@ -111,11 +108,11 @@ class DespachoController extends Controller
                     ]);
                 }
 
-                $solicitud->update([
-                    'status' => 'aprobada',
-                    'processed_by' => $request->user()->id,
-                    'processed_at' => now(),
-                ]);
+                // Resultado y auditoría no son masignables: los fija el servidor.
+                $solicitud->status = 'aprobada';
+                $solicitud->processed_by = $request->user()->id;
+                $solicitud->processed_at = now();
+                $solicitud->save();
             });
         } catch (\Throwable $e) {
             return back()->with('error', 'No se pudo aprobar la solicitud. Intenta de nuevo.');
@@ -133,22 +130,18 @@ class DespachoController extends Controller
         return view('despacho.rechazar', compact('solicitud'));
     }
 
-    public function rechazar(Request $request, EquipmentRequest $solicitud): RedirectResponse
+    public function rechazar(RechazarSolicitudRequest $request, EquipmentRequest $solicitud): RedirectResponse
     {
         if ($solicitud->status !== 'pendiente') {
             return redirect()->route('admin.solicitudes.index')->with('error', 'Esta solicitud ya fue procesada.');
         }
 
-        $request->validate([
-            'admin_observation' => ['required', 'string', 'min:5', 'max:500'],
-        ]);
-
-        $solicitud->update([
-            'status' => 'rechazada',
-            'admin_observation' => $request->admin_observation,
-            'processed_by' => $request->user()->id,
-            'processed_at' => now(),
-        ]);
+        // Resultado, motivo y auditoría no son masignables: los fija el servidor.
+        $solicitud->status = 'rechazada';
+        $solicitud->admin_observation = $request->validated('admin_observation');
+        $solicitud->processed_by = $request->user()->id;
+        $solicitud->processed_at = now();
+        $solicitud->save();
 
         return redirect()->route('admin.solicitudes.index')->with('success', 'Solicitud rechazada correctamente.');
     }

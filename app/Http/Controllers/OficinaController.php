@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OficinaRequest;
 use App\Models\Office;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class OficinaController extends Controller
 {
@@ -25,14 +24,9 @@ class OficinaController extends Controller
         return view('oficinas.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(OficinaRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'code' => ['required', 'string', 'max:10', 'unique:offices,code'],
-            'name' => ['required', 'string', 'max:120', 'unique:offices,name'],
-            'location' => ['nullable', 'string', 'max:160'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validated();
 
         $data['is_active'] = $request->boolean('is_active', true);
 
@@ -46,14 +40,9 @@ class OficinaController extends Controller
         return view('oficinas.edit', compact('office'));
     }
 
-    public function update(Request $request, Office $office): RedirectResponse
+    public function update(OficinaRequest $request, Office $office): RedirectResponse
     {
-        $data = $request->validate([
-            'code' => ['required', 'string', 'max:10', Rule::unique('offices', 'code')->ignore($office->id)],
-            'name' => ['required', 'string', 'max:120', Rule::unique('offices', 'name')->ignore($office->id)],
-            'location' => ['nullable', 'string', 'max:160'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validated();
 
         $data['is_active'] = $request->boolean('is_active');
 

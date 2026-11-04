@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoriaRequest;
 use App\Models\Category;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class CategoriaController extends Controller
 {
@@ -22,18 +22,9 @@ class CategoriaController extends Controller
         return view('categorias.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(CategoriaRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:80', 'unique:categories,name'],
-            'description' => ['nullable', 'string', 'max:255'],
-            'spec_fields' => ['nullable', 'array'],
-            'spec_fields.*' => ['string', Rule::in(array_keys(Category::CAMPOS_TECNICOS))],
-            'is_active' => ['nullable', 'boolean'],
-        ], [
-            'name.unique' => 'Ya existe una categoría con ese nombre.',
-            'name.required' => 'El nombre es obligatorio.',
-        ]);
+        $data = $request->validated();
 
         $data['name'] = mb_strtolower(trim($data['name']));
         $data['spec_fields'] = $this->camposSeleccionados($request);
@@ -49,17 +40,9 @@ class CategoriaController extends Controller
         return view('categorias.edit', compact('categoria'));
     }
 
-    public function update(Request $request, Category $categoria): RedirectResponse
+    public function update(CategoriaRequest $request, Category $categoria): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:80', Rule::unique('categories', 'name')->ignore($categoria->id)],
-            'description' => ['nullable', 'string', 'max:255'],
-            'spec_fields' => ['nullable', 'array'],
-            'spec_fields.*' => ['string', Rule::in(array_keys(Category::CAMPOS_TECNICOS))],
-            'is_active' => ['nullable', 'boolean'],
-        ], [
-            'name.unique' => 'Ya existe una categoría con ese nombre.',
-        ]);
+        $data = $request->validated();
 
         $data['name'] = mb_strtolower(trim($data['name']));
         $data['spec_fields'] = $this->camposSeleccionados($request);

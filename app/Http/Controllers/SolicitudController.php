@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SolicitudRequest;
 use App\Models\Category;
 use App\Models\EquipmentRequest;
 use Illuminate\Contracts\View\View;
@@ -29,15 +30,10 @@ class SolicitudController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(SolicitudRequest $request): RedirectResponse
     {
         $user = $request->user();
-
-        $data = $request->validate([
-            'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'quantity' => ['required', 'integer', 'min:1', 'max:50'],
-            'justification' => ['required', 'string', 'min:10', 'max:1000'],
-        ]);
+        $data = $request->validated();
 
         $categoria = Category::find($data['category_id']);
         if (!$categoria || !$categoria->is_active) {
@@ -88,7 +84,9 @@ class SolicitudController extends Controller
             return back()->with('error', 'Solo se pueden cancelar solicitudes pendientes.');
         }
 
-        $solicitud->update(['status' => 'cancelada']);
+        // `status` no es masignable: la cancelación se fija de forma explícita.
+        $solicitud->status = 'cancelada';
+        $solicitud->save();
 
         return redirect()->route('solicitudes.index')->with('success', 'Solicitud cancelada correctamente.');
     }

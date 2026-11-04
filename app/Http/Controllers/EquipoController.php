@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CambioEstadoEquipoRequest;
+use App\Http\Requests\EquipoRequest;
 use App\Models\Category;
 use App\Models\Equipment;
 use App\Models\StatusHistory;
@@ -9,7 +11,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class EquipoController extends Controller
 {
@@ -56,26 +57,9 @@ class EquipoController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(EquipoRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'patrimonial_code' => ['required', 'string', 'max:20', 'unique:equipment,patrimonial_code'],
-            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')->where('is_active', true)],
-            'brand' => ['required', 'string', 'max:80'],
-            'model' => ['required', 'string', 'max:80'],
-            'serial_number' => ['nullable', 'string', 'max:80', Rule::unique('equipment', 'serial_number')->whereNull('deleted_at')],
-            'cpu' => ['nullable', 'string', 'max:120'],
-            'ram_gb' => ['nullable', 'integer', 'min:1'],
-            'storage_gb' => ['nullable', 'integer', 'min:1'],
-            'storage_type' => ['nullable', 'string', Rule::in(['hdd', 'ssd', 'nvme', 'emmc'])],
-            'status' => ['required', Rule::in(['disponible', 'asignado', 'mantenimiento'])],
-            'acquisition_date' => ['nullable', 'date'],
-            'observations' => ['nullable', 'string'],
-        ], [
-            'patrimonial_code.unique' => 'Este código patrimonial ya está registrado.',
-            'serial_number.unique' => 'Este número de serie ya está registrado.',
-            'category_id.required' => 'Debes seleccionar una categoría.',
-        ]);
+        $data = $request->validated();
 
         $data = $this->soloCamposDeLaCategoria(Category::findOrFail($data['category_id']), $data);
 
@@ -103,24 +87,9 @@ class EquipoController extends Controller
         ]);
     }
 
-    public function update(Request $request, Equipment $equipo): RedirectResponse
+    public function update(EquipoRequest $request, Equipment $equipo): RedirectResponse
     {
-        $data = $request->validate([
-            'patrimonial_code' => ['required', 'string', 'max:20', Rule::unique('equipment', 'patrimonial_code')->ignore($equipo->id)],
-            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')],
-            'brand' => ['required', 'string', 'max:80'],
-            'model' => ['required', 'string', 'max:80'],
-            'serial_number' => ['nullable', 'string', 'max:80', Rule::unique('equipment', 'serial_number')->ignore($equipo->id)->whereNull('deleted_at')],
-            'cpu' => ['nullable', 'string', 'max:120'],
-            'ram_gb' => ['nullable', 'integer', 'min:1'],
-            'storage_gb' => ['nullable', 'integer', 'min:1'],
-            'storage_type' => ['nullable', 'string', Rule::in(['hdd', 'ssd', 'nvme', 'emmc'])],
-            'acquisition_date' => ['nullable', 'date'],
-            'observations' => ['nullable', 'string'],
-        ], [
-            'patrimonial_code.unique' => 'Este código patrimonial ya está registrado.',
-            'serial_number.unique' => 'Este número de serie ya está registrado.',
-        ]);
+        $data = $request->validated();
 
         $data = $this->soloCamposDeLaCategoria(Category::findOrFail($data['category_id']), $data);
 
@@ -166,12 +135,9 @@ class EquipoController extends Controller
         return redirect()->route('equipos.index', ['eliminados' => 1])->with('success', 'Equipo restaurado correctamente.');
     }
 
-    public function cambiarEstado(Request $request, Equipment $equipo): RedirectResponse
+    public function cambiarEstado(CambioEstadoEquipoRequest $request, Equipment $equipo): RedirectResponse
     {
-        $data = $request->validate([
-            'status' => ['required', Rule::in(['disponible', 'asignado', 'mantenimiento'])],
-            'notes' => ['nullable', 'string', 'max:255'],
-        ]);
+        $data = $request->validated();
 
         $from = $equipo->status;
 
