@@ -4,122 +4,244 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ isset($header) ? $header.' · '.config('app.name') : config('app.name') }}</title>
+    <title>{{ isset($header) ? $header.' · '.config('app.name', 'SIGEDTEC') : config('app.name', 'SIGEDTEC') }}</title>
+
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
-<div class="min-h-screen flex" x-data="{ menuAbierto: false }">
+<body class="min-h-screen bg-page font-sans text-ink antialiased">
+@php
+    $usuario = auth()->user();
+    $esAdmin = $usuario?->isAdmin() ?? false;
+    $activo = fn (...$rutas) => request()->routeIs(...$rutas);
+
+    $enDashboard = request()->routeIs('dashboard');
+
+    if ($esAdmin) {
+        $menu = [
+            ['tipo' => 'enlace', 'etiqueta' => 'Inicio', 'icono' => 'home', 'ruta' => 'dashboard', 'activo' => $activo('dashboard')],
+            ['tipo' => 'enlace', 'etiqueta' => 'Inventario', 'icono' => 'box', 'ruta' => 'equipos.index', 'activo' => $activo('equipos.*')],
+            ['tipo' => 'enlace', 'etiqueta' => 'Solicitudes', 'icono' => 'clipboard', 'ruta' => 'admin.solicitudes.index', 'activo' => $activo('admin.solicitudes.*')],
+            ['tipo' => 'enlace', 'etiqueta' => 'Asignaciones', 'icono' => 'swap', 'ruta' => 'reportes.asignaciones', 'activo' => $activo('reportes.asignaciones')],
+            ['tipo' => 'grupo', 'etiqueta' => 'Reportes', 'icono' => 'chart', 'abierto' => $activo('reportes.inventario', 'reportes.solicitudes', 'reportes.movimientos'), 'hijos' => [
+                ['etiqueta' => 'Reporte de inventario', 'ruta' => 'reportes.inventario'],
+                ['etiqueta' => 'Reporte de solicitudes', 'ruta' => 'reportes.solicitudes'],
+                ['etiqueta' => 'Movimientos', 'ruta' => 'reportes.movimientos'],
+            ]],
+            ['tipo' => 'grupo', 'etiqueta' => 'Catálogos', 'icono' => 'folders', 'abierto' => $activo('categorias.*', 'oficinas.*'), 'hijos' => [
+                ['etiqueta' => 'Categorías', 'ruta' => 'categorias.index'],
+                ['etiqueta' => 'Oficinas', 'ruta' => 'oficinas.index'],
+            ]],
+            ['tipo' => 'enlace', 'etiqueta' => 'Usuarios', 'icono' => 'users', 'ruta' => 'usuarios.index', 'activo' => $activo('usuarios.*')],
+        ];
+        if (! $enDashboard) {
+            $menu[] = ['tipo' => 'enlace', 'etiqueta' => 'Mi perfil', 'icono' => 'user', 'ruta' => 'profile.edit', 'activo' => $activo('profile.*')];
+        }
+    } else {
+        $menu = [
+            ['tipo' => 'enlace', 'etiqueta' => 'Inicio', 'icono' => 'home', 'ruta' => 'dashboard', 'activo' => $activo('dashboard')],
+            ['tipo' => 'enlace', 'etiqueta' => 'Mis solicitudes', 'icono' => 'clipboard', 'ruta' => 'solicitudes.index', 'activo' => $activo('solicitudes.index', 'solicitudes.show')],
+            ['tipo' => 'enlace', 'etiqueta' => 'Nueva solicitud', 'icono' => 'plus', 'ruta' => 'solicitudes.create', 'activo' => $activo('solicitudes.create')],
+        ];
+        if (! $enDashboard) {
+            $menu[] = ['tipo' => 'enlace', 'etiqueta' => 'Mi perfil', 'icono' => 'user', 'ruta' => 'profile.edit', 'activo' => $activo('profile.*')];
+        }
+    }
+@endphp
+
+<div class="min-h-screen" x-data="{ menuAbierto: false }">
 
     {{-- ══ Barra lateral (SDD §20.4) ══ --}}
-    <aside
-        class="fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 flex flex-col transform transition-transform duration-200 ease-out -translate-x-full lg:translate-x-0"
-        :class="menuAbierto ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+    <aside class="fixed inset-y-0 left-0 z-40 flex w-[264px] -translate-x-full flex-col bg-[linear-gradient(180deg,#061020_0%,#081A34_55%,#05101F_100%)] transition-transform duration-200 ease-out lg:translate-x-0"
+           :class="menuAbierto ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
 
-        <div class="h-16 flex items-center gap-2 px-5 border-b border-slate-200">
-            <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white text-sm font-bold">ST</span>
-            <span class="font-semibold tracking-tight text-slate-800">SIGEDTEC</span>
+        {{-- Identidad --}}
+        <div class="flex items-center gap-3 border-b border-white/[0.07] px-5 py-5">
+            <x-ui.icon name="logo" class="h-9 w-9 shrink-0 text-sky-400" />
+            <div class="min-w-0">
+                <p class="text-xl font-extrabold leading-none tracking-tight text-white">Siged<span class="text-sky-400">Tec</span></p>
+                <p class="mt-1 text-[9.5px] leading-tight text-slate-400">
+                    Sistema de Gestión de Inventario<br>y Despacho Tecnológico
+                </p>
+            </div>
         </div>
 
-        @php
-            $rol = auth()->user()->role ?? '';
-            $items = [];
-
-            if ($rol === 'admin') {
-                $items = [
-                    ['ruta' => 'dashboard', 'etiqueta' => 'Panel', 'visible' => true],
-                    ['ruta' => 'admin.solicitudes.index', 'etiqueta' => 'Solicitudes', 'visible' => true],
-                    ['ruta' => 'equipos.index', 'etiqueta' => 'Inventario', 'visible' => true],
-                    ['ruta' => 'categorias.index', 'etiqueta' => 'Categorías', 'visible' => true],
-                    ['ruta' => 'oficinas.index', 'etiqueta' => 'Oficinas', 'visible' => true],
-                    ['ruta' => 'reportes.inventario', 'etiqueta' => 'Reportes', 'visible' => true],
-                    ['ruta' => 'reportes.solicitudes', 'etiqueta' => 'Reportes solicitudes', 'visible' => true],
-                    ['ruta' => 'reportes.asignaciones', 'etiqueta' => 'Asignaciones', 'visible' => true],
-                    ['ruta' => 'reportes.movimientos', 'etiqueta' => 'Movimientos', 'visible' => true],
-                ];
-            } else {
-                $items = [
-                    ['ruta' => 'dashboard', 'etiqueta' => 'Panel', 'visible' => true],
-                    ['ruta' => 'solicitudes.index', 'etiqueta' => 'Mis solicitudes', 'visible' => true],
-                ];
-            }
-        @endphp
-
-        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-            @foreach ($items as $item)
-                @if ($item['visible'])
+        <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Navegación principal">
+            @foreach ($menu as $item)
+                @if ($item['tipo'] === 'enlace')
                     <a href="{{ route($item['ruta']) }}"
-                       @class([
-                           'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                           'bg-blue-50 text-blue-700' => request()->routeIs(str_replace(['.index', '.create', '.edit'], ['.*', '.*', '.*'], $item['ruta'])) || request()->routeIs($item['ruta']),
-                           'text-slate-600 hover:bg-slate-100 hover:text-slate-900' => ! (request()->routeIs(str_replace(['.index', '.create', '.edit'], ['.*', '.*', '.*'], $item['ruta'])) || request()->routeIs($item['ruta'])),
-                       ])>
-                        {{ $item['etiqueta'] }}
+                       @class(['nav-item', 'nav-item-active' => $item['activo']])
+                       @if ($item['activo']) aria-current="page" @endif>
+                        <x-ui.icon :name="$item['icono']" class="h-5 w-5 shrink-0" />
+                        <span class="truncate">{{ $item['etiqueta'] }}</span>
+                        <x-ui.icon name="chevron-right" class="ms-auto h-3.5 w-3.5 opacity-50" />
                     </a>
+                @else
+                    <div x-data="{ abierto: {{ $item['abierto'] ? 'true' : 'false' }} }">
+                        <button type="button" @click="abierto = ! abierto"
+                                class="nav-item w-full justify-start"
+                                :aria-expanded="abierto">
+                            <x-ui.icon :name="$item['icono']" class="h-5 w-5 shrink-0" />
+                            <span class="truncate">{{ $item['etiqueta'] }}</span>
+                            <x-ui.icon name="chevron-down"
+                                       class="ms-auto h-3.5 w-3.5 shrink-0 opacity-60 transition-transform"
+                                       x-bind:class="abierto ? 'rotate-180' : ''" />
+                        </button>
+                        <div x-show="abierto" x-cloak class="mt-1 space-y-0.5">
+                            @foreach ($item['hijos'] as $hijo)
+                                <a href="{{ route($hijo['ruta']) }}"
+                                   @class(['nav-subitem', 'nav-subitem-active' => $activo($hijo['ruta'])])>
+                                    <span class="h-1 w-1 rounded-full bg-current opacity-70"></span>
+                                    {{ $hijo['etiqueta'] }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
                 @endif
             @endforeach
         </nav>
 
-        <div class="border-t border-slate-200 px-4 py-3">
-            <p class="text-sm font-medium text-slate-800 truncate">{{ auth()->user()->name }}</p>
-            <p class="text-xs text-slate-500">
-                {{ auth()->user()->isAdmin() ? 'Soporte Técnico' : 'Jefe de Oficina' }} · {{ auth()->user()->office->name ?? '' }}
-            </p>
-            <form method="POST" action="{{ route('logout') }}" class="mt-2">
-                @csrf
-                <button type="submit" class="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline">
-                    Cerrar sesión
-                </button>
-            </form>
-        </div>
+        {{-- Pie de la barra lateral --}}
+        @if (!request()->routeIs('dashboard'))
+            <div class="border-t border-white/[0.07] px-4 py-4">
+                <div class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-4 text-center">
+                    <x-ui.icon name="monitor" class="mx-auto h-8 w-8 text-sky-300/80" />
+                    <p class="mt-2.5 text-[10.5px] italic leading-snug text-slate-400">
+                        “La tecnología<br>también es un recurso<br>institucional”
+                    </p>
+                </div>
+
+                <div class="mt-3 space-y-1.5 text-[10.5px] text-slate-500">
+                    <p class="flex items-center gap-2 px-1"><x-ui.icon name="settings" class="h-3.5 w-3.5" />SIGEDTEC v1.0</p>
+                    <p class="flex items-center gap-2 px-1"><x-ui.icon name="layers" class="h-3.5 w-3.5" />Laravel + PostgreSQL</p>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex w-full items-center gap-2 rounded-lg px-1 py-1.5 text-left font-medium text-slate-400 transition hover:text-white">
+                            <x-ui.icon name="logout" class="h-4 w-4" />Cerrar sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endif
     </aside>
 
     {{-- Fondo para cerrar el menú en móvil --}}
-    <div class="fixed inset-0 z-30 bg-slate-900/40 lg:hidden" x-show="menuAbierto" x-cloak @click="menuAbierto = false"></div>
+    <div class="fixed inset-0 z-30 bg-navy-950/60 backdrop-blur-sm lg:hidden" x-show="menuAbierto" x-cloak @click="menuAbierto = false"></div>
 
     {{-- ══ Columna principal ══ --}}
-    <div class="flex-1 flex flex-col min-w-0 lg:ml-64">
+    <div class="flex min-h-screen min-w-0 flex-col lg:pl-[264px]">
 
         {{-- Barra superior --}}
-        <header class="h-16 bg-white border-b border-slate-200 flex items-center gap-3 px-4 lg:px-6 shrink-0">
-            <button type="button" class="lg:hidden p-2 -ml-2 rounded-md text-slate-600 hover:bg-slate-100"
-                    @click="menuAbierto = !menuAbierto" aria-label="Abrir menú de navegación">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
+        <header class="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-3 border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-7">
+            <button type="button" class="rounded-lg p-2 text-slate-600 transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 lg:hidden"
+                    @click="menuAbierto = ! menuAbierto" aria-label="Abrir menú de navegación">
+                <x-ui.icon name="menu" class="h-5 w-5" />
             </button>
 
-            <h1 class="text-sm font-semibold text-slate-700 truncate">{{ $header ?? 'Sistema de Gestión de Inventario y Despacho Tecnológico' }}</h1>
+            <p class="hidden max-w-[190px] truncate text-sm font-semibold text-slate-700 xl:block">
+                {{ $header ?? 'Panel principal' }}
+            </p>
 
-            <div class="ml-auto hidden sm:flex items-center gap-2 text-xs text-slate-500">
-                <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 font-semibold text-slate-600">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </span>
-                {{ auth()->user()->email }}
+            {{-- Búsqueda global (usa el filtro real del inventario) --}}
+            @if ($esAdmin)
+                <form method="GET" action="{{ route('equipos.index') }}"
+                      class="relative min-w-0 flex-1 sm:max-w-[420px] xl:mx-4" role="search">
+                    <x-ui.icon name="search" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input type="search" name="q" value="{{ request('q') }}"
+                           class="h-10 w-full rounded-full border border-slate-200 bg-slate-50 pl-10 pr-4 text-[13px] text-slate-700 placeholder:text-slate-400 shadow-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-500/20"
+                           placeholder="Buscar equipos, solicitudes, oficinas…"
+                           aria-label="Buscar en el inventario">
+                </form>
+            @endif
+
+            <div class="ms-auto flex items-center gap-1.5 sm:gap-3">
+                {{-- Notificaciones --}}
+                <a href="{{ $esAdmin ? route('admin.solicitudes.index', ['estado' => 'pendiente']) : route('solicitudes.index') }}"
+                   class="relative rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                   aria-label="Solicitudes pendientes">
+                    <x-ui.icon name="bell" class="h-5 w-5" />
+                    @if (($navPendientes ?? 0) > 0)
+                        <span class="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
+                            {{ $navPendientes > 9 ? '9+' : $navPendientes }}
+                        </span>
+                    @endif
+                </a>
+
+                <span class="hidden h-8 w-px bg-slate-200 sm:block"></span>
+
+                {{-- Menú del usuario --}}
+                <div class="relative" x-data="{ abierto: false }" @click.outside="abierto = false">
+                    <button type="button" @click="abierto = ! abierto"
+                            class="flex items-center gap-2.5 rounded-full py-1 pl-1 pr-2 transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                            :aria-expanded="abierto">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-navy-900 text-sm font-bold text-sky-300">
+                            {{ strtoupper(substr($usuario->name ?? 'U', 0, 1)) }}
+                        </span>
+                        <span class="hidden text-left sm:block">
+                            <span class="block text-[13px] font-semibold leading-tight text-slate-800">{{ $usuario->name }}</span>
+                            <span class="block text-[11px] leading-tight text-slate-500">
+                                {{ $esAdmin ? 'Administrador (Soporte Técnico)' : 'Solicitante (Jefe de Oficina)' }}
+                            </span>
+                        </span>
+                        <x-ui.icon name="chevron-down" class="h-4 w-4 text-slate-400" />
+                    </button>
+
+                    <div x-show="abierto" x-cloak x-transition.origin.top.right
+                         class="absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+                        <p class="px-3 py-2 text-[11px] text-slate-500">{{ $usuario->email }}</p>
+                        <div class="my-1 h-px bg-slate-100"></div>
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium text-slate-700 transition hover:bg-slate-50">
+                            <x-ui.icon name="user" class="h-4 w-4" />Mi perfil
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[13px] font-medium text-rose-600 transition hover:bg-rose-50">
+                                <x-ui.icon name="logout" class="h-4 w-4" />Cerrar sesión
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </header>
 
-        {{-- Contenido principal --}}
-        <main class="flex-1 px-4 py-6 lg:px-6 space-y-6">
+        {{-- Contenido --}}
+        <main class="flex-1 px-4 py-6 sm:px-6 lg:px-7">
+            <div class="mx-auto w-full max-w-[1280px] space-y-6">
 
-            {{-- Sistema de notificaciones (SDD §20.4) --}}
-            @if (session('success'))
-                <x-ui.alert type="success">{{ session('success') }}</x-ui.alert>
-            @endif
-            @if (session('error'))
-                <x-ui.alert type="danger">{{ session('error') }}</x-ui.alert>
-            @endif
-            @if ($errors->any())
-                <x-ui.alert type="danger" title="Revise los datos ingresados">
-                    <ul class="list-disc ms-4 space-y-1">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </x-ui.alert>
-            @endif
+                {{-- Notificaciones (SDD §20.4) --}}
+                @if (session('success'))
+                    <x-ui.alert type="success">{{ session('success') }}</x-ui.alert>
+                @endif
+                @if (session('error'))
+                    <x-ui.alert type="danger">{{ session('error') }}</x-ui.alert>
+                @endif
+                @if ($errors->any())
+                    <x-ui.alert type="danger" title="Revise los datos ingresados">
+                        <ul class="list-disc space-y-1 ps-4">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </x-ui.alert>
+                @endif
 
-            {{ $slot }}
+                {{ $slot }}
+            </div>
         </main>
+
+        {{-- Pie --}}
+        <footer class="border-t border-slate-200 bg-white px-4 py-4 sm:px-6 lg:px-7">
+            <div class="mx-auto flex w-full max-w-[1280px] flex-col gap-1.5 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+                <p>Sistema de Gestión de Inventario y Despacho Tecnológico (SIGEDTEC)</p>
+                <p class="flex items-center gap-2">
+                    <span>Universidad Politécnica Territorial</span>
+                    <span class="text-slate-300">|</span>
+                    <span>Trayecto III · PNF en Informática</span>
+                </p>
+            </div>
+        </footer>
     </div>
 </div>
 </body>

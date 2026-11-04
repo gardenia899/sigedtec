@@ -8,6 +8,7 @@ use App\Http\Controllers\OficinaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,8 +21,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return Auth::check() ? redirect()->route('dashboard') : redirect()->route('login');
-});
+    return Auth::check() ? redirect()->route('dashboard') : view('home');
+})->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -111,6 +112,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('reportes')->name('reportes.')
     Route::get('/solicitudes', [ReporteController::class, 'solicitudes'])->name('solicitudes');
     Route::get('/asignaciones', [ReporteController::class, 'asignaciones'])->name('asignaciones');
     Route::get('/movimientos', [ReporteController::class, 'movimientos'])->name('movimientos');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Módulo 8 — Usuarios (Admin)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->prefix('usuarios')->name('usuarios.')->group(function () {
+    Route::get('/', [UsuarioController::class, 'index'])->name('index');
+    Route::get('/{usuario}/editar', [UsuarioController::class, 'edit'])->name('edit');
+    Route::put('/{usuario}', [UsuarioController::class, 'update'])->name('update');
 });
 
 require __DIR__.'/auth.php';
