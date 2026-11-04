@@ -64,7 +64,14 @@ class SolicitudController extends Controller
             abort(404);
         }
 
-        $solicitud->load(['category', 'office', 'user', 'procesadaPor', 'items.equipment']);
+        $solicitud->load([
+            'category:id,name',
+            'office:id,name',
+            'user:id,name',
+            'procesadaPor:id,name',
+            'items:id,request_id,equipment_id',
+            'items.equipment:id,patrimonial_code,brand,model,serial_number',
+        ]);
 
         return view('solicitudes.show', compact('solicitud'));
     }

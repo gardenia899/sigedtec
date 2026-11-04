@@ -15,7 +15,10 @@ class EquipoController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Equipment::with('category')->orderBy('patrimonial_code');
+        // Solo las columnas que muestra el listado: evita traer observaciones y fechas.
+        $query = Equipment::with('category:id,name')
+            ->select(['id', 'patrimonial_code', 'category_id', 'brand', 'model', 'serial_number', 'cpu', 'ram_gb', 'storage_gb', 'storage_type', 'status'])
+            ->orderBy('patrimonial_code');
 
         if ($request->filled('categoria')) {
             $query->where('category_id', $request->categoria);

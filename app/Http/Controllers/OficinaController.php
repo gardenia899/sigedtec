@@ -13,7 +13,10 @@ class OficinaController extends Controller
     public function index(): View
     {
         return view('oficinas.index', [
-            'oficinas' => Office::withCount('users')->orderBy('code')->get(),
+            'oficinas' => Office::withCount('users')
+                ->select(['id', 'code', 'name', 'location', 'is_active'])
+                ->orderBy('code')
+                ->get(),
         ]);
     }
 

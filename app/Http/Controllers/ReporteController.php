@@ -15,7 +15,9 @@ class ReporteController extends Controller
 {
     public function inventario(Request $request): View
     {
-        $query = Equipment::with('category:id,name')->orderBy('patrimonial_code');
+        $query = Equipment::with('category:id,name')
+            ->select(['id', 'patrimonial_code', 'category_id', 'brand', 'model', 'serial_number', 'status'])
+            ->orderBy('patrimonial_code');
 
         if ($request->filled('categoria')) {
             $query->where('category_id', $request->categoria);
@@ -93,7 +95,8 @@ class ReporteController extends Controller
 
     public function movimientos(Request $request): View
     {
-        $query = StatusHistory::with(['equipment:id,patrimonial_code,brand,model', 'user:id,name', 'request:id'])
+        $query = StatusHistory::with(['equipment:id,patrimonial_code', 'user:id,name'])
+            ->select(['id', 'equipment_id', 'user_id', 'from_status', 'to_status', 'reason', 'notes', 'created_at'])
             ->orderByDesc('created_at');
 
         if ($request->filled('desde')) {

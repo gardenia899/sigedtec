@@ -20,7 +20,8 @@ class DespachoController extends Controller
         $solicitudes = EquipmentRequest::with(['office:id,name', 'category:id,name', 'user:id,name'])
             ->when($estado !== 'todas', fn ($q) => $q->where('status', $estado))
             ->orderByDesc('created_at')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         // Un solo recorrido de la tabla para los cuatro contadores (antes: cuatro COUNT).
         $conteos = EquipmentRequest::selectRaw('status, count(*) as total')

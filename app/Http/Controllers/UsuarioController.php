@@ -12,7 +12,8 @@ class UsuarioController extends Controller
 {
     public function index(): View
     {
-        $usuarios = User::with('office')
+        $usuarios = User::with('office:id,name')
+            ->select(['id', 'name', 'email', 'office_id', 'role'])
             ->orderBy('name')
             ->get();
 
