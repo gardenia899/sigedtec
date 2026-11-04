@@ -34,6 +34,8 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 24 | 2026-11-03 | `fix: mejorar validacion de equipos con mensajes claros` | Se ajustan validaciones únicas para equipos |
 | 25 | 2026-11-03 | `fix: mensajes de validacion en categorias` | Se agregan mensajes claros para categorías |
 | 26 | 2026-11-03 | `feat: agregar modulo de usuarios para cambiar roles` | Se crea módulo de usuarios para que admin cambie roles |
+| 27 | 2026-11-05 | `feat: rediseñar la interfaz y adaptar las especificaciones a cada categoría` | Portada pública, design system en todos los módulos, especificaciones técnicas según la categoría del equipo y catálogo de 14 tipos de aparato |
+| 28 | 2026-11-05 | `perf: indexar las consultas mas usadas y limitar columnas en los listados` | Índices para panel, bandeja y reportes; columnas explícitas en los listados y paginación que conserva el filtro |
 
 
 ## Pendientes por hacer
