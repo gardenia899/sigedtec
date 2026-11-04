@@ -1,15 +1,20 @@
 {{--
     Pantalla de carga del sistema.
     Se muestra al entrar a una página, al enviar un formulario y al abrir un
-    enlace interno; se oculta cuando la página termina de cargar.
+    enlace interno. Permanece al menos dos segundos desde que aparece, aunque
+    la página termine de cargar antes, y se retira al cumplirse ese tiempo.
 --}}
 <div
     x-data="{
         visible: true,
+        inicio: Date.now(),
         ocultar() {
-            window.setTimeout(() => { this.visible = false; }, 250);
+            const restante = Math.max(0, 2000 - (Date.now() - this.inicio));
+
+            window.setTimeout(() => { this.visible = false; }, restante);
         },
         mostrar() {
+            this.inicio = Date.now();
             this.visible = true;
         }
     }"

@@ -41,6 +41,7 @@ Todo se hace con el usuario configurado: Yocelianna Rodriguez
 | 31 | 2026-11-05 | `docs: actualizar orden de commits y detalles del sistema` | Se documentan la pantalla de carga, la portada, las especificaciones por categoría y los índices |
 | 32 | 2026-11-05 | `refactor: mover validaciones a Form Requests por módulo` | Una clase por módulo para alta y edición; se corrigen los campos protegidos que no se guardaban y se agrega prueba de los formularios |
 | 33 | 2026-11-05 | `docs: documentar Form Requests y campos protegidos` | Se detalla la validación por módulo y qué campos fija el servidor |
+| 34 | 2026-11-05 | `fix: sostener la pantalla de carga dos segundos` | La pantalla permanece al menos dos segundos desde que aparece, aunque la página cargue antes |
 
 
 ## Pendientes por hacer
