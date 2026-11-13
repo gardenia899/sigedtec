@@ -1,57 +1,43 @@
-# Frontend - SIGEDTEC
+# Interfaz de SIGEDTEC
 
-Llevar control de las vistas, componentes, layout y lo que falta por mostrar correctamente.
+La interfaz está escrita en español con vistas Blade, Tailwind CSS y componentes reutilizables. Vite compila los recursos del frontend y Alpine.js apoya interacciones puntuales. Las pantallas autenticadas comparten el layout principal, con navegación lateral y barra superior; el contenido del menú depende del rol.
 
-## Estado actual
+## Vistas principales
 
-- Breeze con Blade + Tailwind 3 y Vite
-- Tokens en `tailwind.config.js`: `primary`, `navy`, `page`, `surface`, `ink`, `muted`, `line`, sombras `card`/`panel`/`nav` y tipografía Inter
-- Clases de componente en `resources/css/app.css`: `btn` (variantes), `field`, `field-select`, `field-area`, `panel`, `filter-bar`, `table-wrap`/`table-ui`, `empty-state`, `page-title`, `page-sub`
-- Componentes `x-ui.*`: `icon`, `badge`, `alert`, `hero`, `tech-scene`, `page-header`
-- Portada pública con `x-layouts.site` y `home.blade.php`; `/` muestra la portada a invitados y redirige a `dashboard` con sesión
-- Sidebar navy con submenús, topbar con buscador (solo admin), campana de pendientes y menú de usuario; “Mi perfil” y “Cerrar sesión” viven en ese menú
+| Carpeta o vista | Función |
+| --- | --- |
+| `home.blade.php` y `components/layouts/site.blade.php` | Portada pública; una persona autenticada continúa al panel. |
+| `auth/` | Inicio de sesión, registro y recuperación de acceso. |
+| `layouts/app.blade.php` | Navegación autenticada, avisos, campana de solicitudes y menú de cuenta. |
+| `dashboard/` | Paneles con indicadores y accesos según el perfil. |
+| `oficinas/` | Consulta, alta y edición de oficinas. |
+| `categorias/` | Consulta y edición de categorías y sus campos técnicos. |
+| `equipos/index.blade.php` y `equipos/edit.blade.php` | Inventario con filtros, acciones de estado y edición. El alta se presenta en un modal desde el listado. |
+| `solicitudes/` | Listado propio, creación y detalle de solicitudes. |
+| `despacho/` | Bandeja del administrador, selección de equipos para aprobar o formulario de rechazo. |
+| `reportes/` | Cuatro reportes web y plantilla compartida para exportación PDF. |
+| `usuarios/` | Consulta y cambio de rol por parte del administrador. |
+| `profile/` | Edición de datos de perfil y cuenta. |
 
-## Vistas existentes
+## Acciones visibles
 
-| Vista | Estado | Comentario |
-| :-- | :--- | :--- |
-| home.blade.php | Funcional | Portada pública con hero, características y llamada a la acción |
-| components/layouts/site.blade.php | Funcional | Nav y pie institucional de la portada |
-| auth/login.blade.php | Funcional | Tema oscuro con tarjetas de rol e inicio de sesión |
-| auth/register.blade.php | Funcional | Registro con selección de oficina |
-| layouts/app.blade.php | Funcional | Layout autenticado (sidebar, topbar, alertas, pie) |
-| layouts/guest.blade.php | Funcional | Layout para auth |
-| dashboard/admin.blade.php | Funcional | Indicadores, últimas solicitudes, dona de inventario y categorías |
-| dashboard/solicitante.blade.php | Funcional | Indicadores propios, solicitudes recientes y oficina |
-| oficinas/* | Funcional | Listado, crear, editar, activar/desactivar |
-| categorias/* | Funcional | Listado, crear, editar; incluye las especificaciones de la categoría |
-| equipos/index.blade.php | Funcional | Listado con filtros, acciones por estado |
-| equipos/create.blade.php | Funcional | Registro con especificaciones según la categoría elegida |
-| equipos/edit.blade.php | Funcional | Edición con las mismas reglas de especificaciones |
-| solicitudes/index.blade.php | Funcional | Listado de solicitudes del solicitante |
-| solicitudes/create.blade.php | Funcional | Crear solicitud |
-| solicitudes/show.blade.php | Funcional | Detalle con equipos asignados |
-| despacho/index.blade.php | Funcional | Bandeja con pestañas por estado |
-| despacho/aprobar.blade.php | Funcional | Selección de equipos para aprobar |
-| despacho/rechazar.blade.php | Funcional | Rechazo con observación |
-| reportes/* | Funcional | Inventario, solicitudes, asignaciones y movimientos |
-| usuarios/* | Funcional | Listado y cambio de rol |
-| profile/* | Funcional | Datos, contraseña y eliminación de cuenta, en español |
+- **Inventario:** filtrar y limpiar filtros; abrir el formulario modal de alta; editar; dar de baja un equipo permitido o restaurarlo desde la vista de bajas. El código patrimonial se muestra, pero no se edita.
+- **Solicitudes:** crear, consultar el detalle y cancelar una solicitud todavía pendiente. El solicitante solo ve sus propias solicitudes.
+- **Bandeja de administración:** filtrar por estado, consultar el detalle, aprobar con selección de los equipos disponibles que correspondan o rechazar con una observación.
+- **Catálogos:** crear y editar oficinas y categorías, activar o desactivar registros. Los códigos de oficina son generados automáticamente.
+- **Reportes:** filtrar, limpiar filtros, paginar y descargar en PDF los resultados filtrados.
+- **Campana:** consultar solicitudes recientes del perfil; sus enlaces llevan al detalle o al procesamiento correspondiente.
+- **Perfil:** abrir opciones de cuenta desde el menú superior.
 
-## Componentes
+## Componentes y estilos
 
-Carpeta `components/ui/` con los componentes reutilizables del sistema visual. Toda pantalla nueva debe usar `x-ui.page-header`, `x-ui.badge`, `x-ui.alert` y las clases `panel`/`table-ui` antes que escribir utilidades sueltas.
+Los componentes Blade compartidos están en `resources/views/components`, incluidos `x-ui.*`. Los estilos y clases comunes se mantienen en `resources/css/app.css`; la configuración de Tailwind está en los archivos de configuración de la raíz.
 
-## Lo que sigue
+Para compilar los recursos antes de servir la aplicación:
 
-1. Nada pendiente de diseño: los módulos usan el mismo sistema visual.
-2. Mejoras opcionales: paginar el listado de usuarios y revisar el resultado en navegador.
+```powershell
+npm install
+npm run build
+```
 
-## Notas
-
-- Todo en español
-- Mantener el mismo layout en todas las pantallas autenticadas
-- Evitar duplicar estilos
-- Usar los componentes `x-ui.*` cuando existan
-- Pensado para desktop/tablet/móvil
-- El formulario de equipo oculta las especificaciones que no aplican a la categoría; el servidor las descarta igualmente
+Durante el desarrollo puede ejecutarse `npm run dev`. Para compilar con Vite no se requiere abrir manualmente cada vista.

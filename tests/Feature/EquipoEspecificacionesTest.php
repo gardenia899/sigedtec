@@ -30,9 +30,16 @@ class EquipoEspecificacionesTest extends TestCase
 
         $this->actingAs($this->admin())
             ->get('/inventario/crear')
+            ->assertRedirect('/inventario?crear=1');
+
+        $this->actingAs($this->admin())
+            ->get('/inventario?crear=1')
             ->assertOk()
             ->assertSee('Especificaciones técnicas')
-            ->assertSee('Impresora');
+            ->assertSee('Impresora')
+            ->assertSee('Registrar equipo')
+            ->assertSee('readonly', false)
+            ->assertSee('style="display: block;"', false);
     }
 
     public function test_descarta_las_especificaciones_que_no_aplican_a_la_categoria(): void
@@ -43,7 +50,6 @@ class EquipoEspecificacionesTest extends TestCase
         $admin = $this->admin();
 
         $this->actingAs($admin)->post('/inventario', [
-            'patrimonial_code' => 'SIG-IMP-001',
             'category_id' => $impresora->id,
             'brand' => 'Epson',
             'model' => 'L3250',
@@ -55,7 +61,6 @@ class EquipoEspecificacionesTest extends TestCase
         ])->assertRedirect(route('equipos.index'));
 
         $this->actingAs($admin)->post('/inventario', [
-            'patrimonial_code' => 'SIG-LAP-001',
             'category_id' => $laptop->id,
             'brand' => 'Lenovo',
             'model' => 'ThinkPad E14',
@@ -66,13 +71,13 @@ class EquipoEspecificacionesTest extends TestCase
             'storage_type' => 'ssd',
         ])->assertRedirect(route('equipos.index'));
 
-        $impresoraRegistrada = Equipment::where('patrimonial_code', 'SIG-IMP-001')->firstOrFail();
+        $impresoraRegistrada = Equipment::where('patrimonial_code', sprintf('SIG-%d-0001', now()->year))->firstOrFail();
         $this->assertNull($impresoraRegistrada->cpu);
         $this->assertNull($impresoraRegistrada->ram_gb);
         $this->assertNull($impresoraRegistrada->storage_gb);
         $this->assertNull($impresoraRegistrada->storage_type);
 
-        $laptopRegistrada = Equipment::where('patrimonial_code', 'SIG-LAP-001')->firstOrFail();
+        $laptopRegistrada = Equipment::where('patrimonial_code', sprintf('SIG-%d-0002', now()->year))->firstOrFail();
         $this->assertSame('Intel Core i5', $laptopRegistrada->cpu);
         $this->assertSame(8, $laptopRegistrada->ram_gb);
     }

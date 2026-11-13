@@ -83,16 +83,6 @@
                         @else
                             <div class="flex items-center justify-end gap-3">
                                 <a href="{{ route('equipos.edit', $equipo) }}" class="link-action">Editar</a>
-                                <form method="POST" action="{{ route('equipos.estado', $equipo) }}" class="flex items-center gap-1.5">
-                                    @csrf
-                                    @method('PATCH')
-                                    <select name="status" class="h-8 rounded-lg border-slate-300 py-0 text-xs">
-                                        <option value="disponible">Disponible</option>
-                                        <option value="mantenimiento">Mantenimiento</option>
-                                        <option value="asignado">Asignado</option>
-                                    </select>
-                                    <button class="link-action">Cambiar</button>
-                                </form>
                                 @if ($equipo->status !== 'asignado')
                                     <form method="POST" action="{{ route('equipos.destroy', $equipo) }}" onsubmit="return confirm('¿Dar de baja este equipo?');">
                                         @csrf
@@ -116,4 +106,8 @@
     <div class="mt-4">
         {{ $equipos->links() }}
     </div>
+
+    <x-modal name="create-equipment" maxWidth="xl" :show="$mostrarModalRegistro" focusable>
+        @include('equipos.partials.create-form')
+    </x-modal>
 </x-app-layout>

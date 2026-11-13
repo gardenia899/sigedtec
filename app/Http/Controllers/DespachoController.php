@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class DespachoController extends Controller
 {
@@ -61,62 +62,60 @@ class DespachoController extends Controller
             return redirect()->route('admin.solicitudes.index')->with('error', 'Esta solicitud ya fue procesada.');
         }
 
-        try {
-            DB::transaction(function () use ($request, $solicitud) {
-                $solicitudBloqueada = EquipmentRequest::where('id', $solicitud->id)->lockForUpdate()->first();
+        DB::transaction(function () use ($request, $solicitud) {
+            $solicitudBloqueada = EquipmentRequest::where('id', $solicitud->id)->lockForUpdate()->first();
 
-                if (!$solicitudBloqueada || $solicitudBloqueada->status !== 'pendiente') {
-                    abort(409, 'Esta solicitud ya fue procesada.');
-                }
+            if (! $solicitudBloqueada || $solicitudBloqueada->status !== 'pendiente') {
+                abort(409, 'Esta solicitud ya fue procesada.');
+            }
 
-                $equiposIds = array_values(array_unique($request->input('equipos')));
+            $equiposIds = array_values(array_unique($request->input('equipos', [])));
 
-                if (count($equiposIds) !== (int) $solicitud->quantity) {
-                    abort(422, 'Debes seleccionar exactamente la cantidad solicitada.');
-                }
+            if (count($equiposIds) !== (int) $solicitud->quantity) {
+                throw ValidationException::withMessages([
+                    'equipos' => 'Debes seleccionar exactamente la cantidad solicitada.',
+                ]);
+            }
 
-                $equipos = Equipment::whereIn('id', $equiposIds)
-                    ->where('category_id', $solicitud->category_id)
-                    ->where('status', 'disponible')
-                    ->whereNull('deleted_at')
-                    ->lockForUpdate()
-                    ->get();
+            $equipos = Equipment::whereIn('id', $equiposIds)
+                ->where('category_id', $solicitud->category_id)
+                ->where('status', 'disponible')
+                ->lockForUpdate()
+                ->get();
 
-                if ($equipos->count() !== count($equiposIds)) {
-                    abort(422, 'Algunos equipos ya no están disponibles o no corresponden a la categoría.');
-                }
+            if ($equipos->count() !== count($equiposIds)) {
+                throw ValidationException::withMessages([
+                    'equipos' => 'Algunos equipos ya no están disponibles o no corresponden a la categoría.',
+                ]);
+            }
 
-                foreach ($equipos as $equipo) {
-                    $equipo->update(['status' => 'asignado']);
+            foreach ($equipos as $equipo) {
+                $equipo->update(['status' => 'asignado']);
 
-                    RequestItem::create([
-                        'request_id' => $solicitud->id,
-                        'equipment_id' => $equipo->id,
-                        'assigned_by' => $request->user()->id,
-                        'status_before' => 'disponible',
-                        'status_after' => 'asignado',
-                    ]);
+                RequestItem::create([
+                    'request_id' => $solicitud->id,
+                    'equipment_id' => $equipo->id,
+                    'assigned_by' => $request->user()->id,
+                    'status_before' => 'disponible',
+                    'status_after' => 'asignado',
+                ]);
 
-                    StatusHistory::create([
-                        'equipment_id' => $equipo->id,
-                        'request_id' => $solicitud->id,
-                        'user_id' => $request->user()->id,
-                        'from_status' => 'disponible',
-                        'to_status' => 'asignado',
-                        'reason' => 'asignacion',
-                        'notes' => 'Asignado por despacho de solicitud #' . $solicitud->id,
-                    ]);
-                }
+                StatusHistory::create([
+                    'equipment_id' => $equipo->id,
+                    'request_id' => $solicitud->id,
+                    'user_id' => $request->user()->id,
+                    'from_status' => 'disponible',
+                    'to_status' => 'asignado',
+                    'reason' => 'asignacion',
+                    'notes' => 'Asignado por despacho de solicitud #'.$solicitud->id,
+                ]);
+            }
 
-                // Resultado y auditoría no son masignables: los fija el servidor.
-                $solicitud->status = 'aprobada';
-                $solicitud->processed_by = $request->user()->id;
-                $solicitud->processed_at = now();
-                $solicitud->save();
-            });
-        } catch (\Throwable $e) {
-            return back()->with('error', 'No se pudo aprobar la solicitud. Intenta de nuevo.');
-        }
+            $solicitud->status = 'aprobada';
+            $solicitud->processed_by = $request->user()->id;
+            $solicitud->processed_at = now();
+            $solicitud->save();
+        });
 
         return redirect()->route('admin.solicitudes.index')->with('success', 'Solicitud aprobada y equipos asignados correctamente.');
     }

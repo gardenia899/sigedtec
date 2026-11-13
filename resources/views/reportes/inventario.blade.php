@@ -3,6 +3,9 @@
 
     <x-ui.page-header title="Reporte de inventario" subtitle="Listado general de equipos registrados en el sistema.">
         <a href="{{ route('reportes.inventario') }}" class="btn btn-outline">Limpiar filtros</a>
+        <a href="{{ route('reportes.inventario.pdf', $filtros) }}" class="btn btn-primary">
+            <x-ui.icon name="file-text" class="h-4 w-4" /> Exportar PDF
+        </a>
     </x-ui.page-header>
 
     <form method="GET" action="{{ route('reportes.inventario') }}" class="filter-bar mt-6">

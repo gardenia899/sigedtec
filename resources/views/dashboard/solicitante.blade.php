@@ -82,10 +82,7 @@
                             <x-ui.icon name="clipboard" class="h-6 w-6" />
                         </span>
                         <p class="mt-3 text-sm font-medium text-slate-700">Todavía no ha registrado solicitudes</p>
-                        <p class="mt-1 text-xs text-slate-500">Cree su primera solicitud para comenzar.</p>
-                        <a href="{{ route('solicitudes.create') }}" class="auth-btn-primary mx-auto mt-4 !h-10 !w-auto px-4">
-                            <x-ui.icon name="plus" class="h-4 w-4" /> Nueva solicitud
-                        </a>
+                        <p class="mt-1 text-xs text-slate-500">Use el botón de nueva solicitud para comenzar.</p>
                     </div>
                 @else
                     <div class="overflow-x-auto">

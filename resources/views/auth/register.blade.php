@@ -14,7 +14,8 @@
                 <x-ui.icon name="user" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                 <input id="name" name="name" type="text" value="{{ old('name') }}"
                        class="auth-input" placeholder="Nombre completo"
-                       required autofocus autocomplete="name">
+                       required autofocus autocomplete="name" pattern="[\p{L}\p{M}\s'-]+"
+                       title="Escribe solo letras, espacios, apóstrofes o guiones.">
             </div>
             @error('name')
                 <p class="mt-1.5 text-xs text-rose-300">{{ $message }}</p>
@@ -64,8 +65,11 @@
                 <x-ui.icon name="lock" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                 <input id="password" name="password" type="password"
                        class="auth-input" placeholder="Contraseña"
-                       required autocomplete="new-password">
+                       required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}"
+                       title="Usa al menos 8 caracteres, una mayúscula, una minúscula y un número."
+                       autocomplete="new-password">
             </div>
+            <p class="mt-1 text-[11px] text-slate-500">Mínimo 8 caracteres, con mayúscula, minúscula y número.</p>
             @error('password')
                 <p class="mt-1.5 text-xs text-rose-300">{{ $message }}</p>
             @enderror

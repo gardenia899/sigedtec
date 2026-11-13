@@ -30,8 +30,8 @@
             <div class="grid gap-5 p-6 md:grid-cols-2">
                 <div>
                     <x-input-label for="patrimonial_code" value="Código patrimonial" />
-                    <x-text-input id="patrimonial_code" name="patrimonial_code" type="text" class="field mt-1.5" :value="old('patrimonial_code', $equipo->patrimonial_code)" required maxlength="20" />
-                    <x-input-error :messages="$errors->get('patrimonial_code')" class="field-error" />
+                    <x-text-input id="patrimonial_code" type="text" class="field mt-1.5 font-mono" :value="$equipo->patrimonial_code" readonly aria-readonly="true" />
+                    <p class="mt-1 text-xs text-slate-500">El código patrimonial es permanente y no se puede editar.</p>
                 </div>
                 <div>
                     <x-input-label for="category_id" value="Categoría" />
@@ -62,6 +62,19 @@
                     <x-text-input id="acquisition_date" name="acquisition_date" type="date" class="field mt-1.5" :value="old('acquisition_date', $equipo->acquisition_date)" />
                     <x-input-error :messages="$errors->get('acquisition_date')" class="field-error" />
                 </div>
+                <div>
+                    <x-input-label for="status" value="Estado" />
+                    @if ($equipo->status === 'asignado')
+                        <x-text-input id="status" type="text" class="field mt-1.5" value="Asignado" readonly aria-readonly="true" />
+                        <p class="mt-1 text-xs text-slate-500">El estado de asignación solo cambia mediante el despacho de una solicitud.</p>
+                    @else
+                        <select id="status" name="status" required class="field-select mt-1.5">
+                            <option value="disponible" @selected(old('status', $equipo->status) === 'disponible')>Disponible</option>
+                            <option value="mantenimiento" @selected(old('status', $equipo->status) === 'mantenimiento')>En mantenimiento</option>
+                        </select>
+                        <x-input-error :messages="$errors->get('status')" class="field-error" />
+                    @endif
+                </div>
             </div>
 
             <div class="panel-head border-t border-slate-100">
@@ -79,12 +92,12 @@
                 </div>
                 <div x-show="aplica('ram_gb')" x-cloak>
                     <x-input-label for="ram_gb" value="RAM (GB)" />
-                    <x-text-input id="ram_gb" name="ram_gb" type="number" class="field mt-1.5" :value="old('ram_gb', $equipo->ram_gb)" min="1" />
+                    <x-text-input id="ram_gb" name="ram_gb" type="number" step="1" class="field mt-1.5" :value="old('ram_gb', $equipo->ram_gb)" min="1" max="65535" />
                     <x-input-error :messages="$errors->get('ram_gb')" class="field-error" />
                 </div>
                 <div x-show="aplica('storage_gb')" x-cloak>
                     <x-input-label for="storage_gb" value="Almacenamiento (GB)" />
-                    <x-text-input id="storage_gb" name="storage_gb" type="number" class="field mt-1.5" :value="old('storage_gb', $equipo->storage_gb)" min="1" />
+                    <x-text-input id="storage_gb" name="storage_gb" type="number" step="1" class="field mt-1.5" :value="old('storage_gb', $equipo->storage_gb)" min="1" max="65535" />
                     <x-input-error :messages="$errors->get('storage_gb')" class="field-error" />
                 </div>
                 <div x-show="aplica('storage_type')" x-cloak>
@@ -110,7 +123,7 @@
             </div>
 
             <div class="flex items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-4">
-                <p class="text-xs text-slate-500">El estado del equipo se modifica desde el inventario.</p>
+                <p class="text-xs text-slate-500">Los cambios de estado se guardan en la bitácora.</p>
                 <div class="flex items-center gap-3">
                     <a href="{{ route('equipos.index') }}" class="btn btn-ghost">Cancelar</a>
                     <button class="btn btn-primary" type="submit">

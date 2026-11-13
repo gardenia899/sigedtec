@@ -33,7 +33,7 @@
 
                 <div>
                     <x-input-label for="quantity" value="Cantidad *" />
-                    <x-text-input id="quantity" name="quantity" type="number" class="field mt-1.5" :value="old('quantity')" min="1" max="50" required />
+                    <x-text-input id="quantity" name="quantity" type="number" step="1" class="field mt-1.5" :value="old('quantity')" min="1" max="50" required />
                     <x-input-error :messages="$errors->get('quantity')" class="field-error" />
                 </div>
 

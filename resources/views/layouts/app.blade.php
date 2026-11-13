@@ -39,7 +39,6 @@
         $menu = [
             ['tipo' => 'enlace', 'etiqueta' => 'Inicio', 'icono' => 'home', 'ruta' => 'dashboard', 'activo' => $activo('dashboard')],
             ['tipo' => 'enlace', 'etiqueta' => 'Mis solicitudes', 'icono' => 'clipboard', 'ruta' => 'solicitudes.index', 'activo' => $activo('solicitudes.index', 'solicitudes.show')],
-            ['tipo' => 'enlace', 'etiqueta' => 'Nueva solicitud', 'icono' => 'plus', 'ruta' => 'solicitudes.create', 'activo' => $activo('solicitudes.create')],
         ];
     }
 @endphp
@@ -145,16 +144,49 @@
 
             <div class="ms-auto flex items-center gap-1.5 sm:gap-3">
                 {{-- Notificaciones --}}
-                <a href="{{ $esAdmin ? route('admin.solicitudes.index', ['estado' => 'pendiente']) : route('solicitudes.index') }}"
-                   class="relative rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-                   aria-label="Solicitudes pendientes">
-                    <x-ui.icon name="bell" class="h-5 w-5" />
-                    @if (($navPendientes ?? 0) > 0)
-                        <span class="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
-                            {{ $navPendientes > 9 ? '9+' : $navPendientes }}
-                        </span>
-                    @endif
-                </a>
+                <div class="relative" x-data="{ abierto: false }" @click.outside="abierto = false">
+                    <button type="button" @click="abierto = ! abierto"
+                            class="relative rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                            aria-label="Notificaciones de solicitudes" :aria-expanded="abierto">
+                        <x-ui.icon name="bell" class="h-5 w-5" />
+                        @if ($esAdmin && ($navPendientes ?? 0) > 0)
+                            <span class="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
+                                {{ $navPendientes > 9 ? '9+' : $navPendientes }}
+                            </span>
+                        @endif
+                    </button>
+                    <div x-show="abierto" x-cloak x-transition.origin.top.right
+                         class="absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                        <div class="border-b border-slate-100 px-4 py-3">
+                            <p class="text-sm font-semibold text-slate-800">{{ $esAdmin ? 'Solicitudes pendientes' : 'Mis solicitudes recientes' }}</p>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto">
+                            @forelse ($navNotificaciones as $notificacion)
+                                @php
+                                    $enlaceNotificacion = $esAdmin
+                                        ? route('admin.solicitudes.form', $notificacion)
+                                        : route('solicitudes.show', $notificacion);
+                                @endphp
+                                <a href="{{ $enlaceNotificacion }}" class="block border-b border-slate-50 px-4 py-3 transition hover:bg-slate-50">
+                                    <span class="flex items-center justify-between gap-3">
+                                        <span class="text-xs font-semibold text-slate-800">Solicitud #{{ str_pad((string) $notificacion->id, 4, '0', STR_PAD_LEFT) }}</span>
+                                        <span class="text-[10px] font-medium uppercase text-slate-500">{{ ucfirst($notificacion->status) }}</span>
+                                    </span>
+                                    <span class="mt-1 block truncate text-xs text-slate-600">
+                                        {{ ucfirst($notificacion->category->name ?? 'Categoría') }} · {{ $notificacion->quantity }} equipo(s)
+                                    </span>
+                                    <span class="mt-1 block text-[10px] text-slate-400">{{ $notificacion->created_at->format('d/m/Y H:i') }}</span>
+                                </a>
+                            @empty
+                                <p class="px-4 py-6 text-center text-xs text-slate-500">No hay solicitudes para mostrar.</p>
+                            @endforelse
+                        </div>
+                        <a href="{{ $esAdmin ? route('admin.solicitudes.index') : route('solicitudes.index') }}"
+                           class="block bg-slate-50 px-4 py-3 text-center text-xs font-semibold text-primary-700 hover:bg-primary-50">
+                            Ver todas las solicitudes
+                        </a>
+                    </div>
+                </div>
 
                 <span class="hidden h-8 w-px bg-slate-200 sm:block"></span>
 

@@ -13,7 +13,7 @@ class CambioEstadoEquipoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['required', Rule::in(['disponible', 'asignado', 'mantenimiento'])],
+            'status' => ['required', Rule::in(['disponible', 'mantenimiento'])],
             'notes' => ['nullable', 'string', 'max:255'],
         ];
     }

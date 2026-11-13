@@ -23,7 +23,8 @@
         <div class="px-6 py-4 text-[13px] leading-relaxed text-slate-700">{{ $solicitud->justification }}</div>
     </div>
 
-    <form method="POST" action="{{ route('admin.solicitudes.aprobar', $solicitud) }}" class="mt-5">
+    <form method="POST" action="{{ route('admin.solicitudes.aprobar', $solicitud) }}" class="mt-5"
+          x-data="{ seleccionados: [], requeridos: {{ (int) $solicitud->quantity }} }">
         @csrf
 
         <div class="panel">
@@ -33,7 +34,10 @@
                         <x-ui.icon name="box" class="h-4 w-4 text-blue-600" />
                         Seleccionar equipos disponibles
                     </h3>
-                    <p class="mt-1 text-xs text-slate-500">Selecciona exactamente {{ $solicitud->quantity }} equipo(s) de esta categoría.</p>
+                    <p class="mt-1 text-xs text-slate-500">
+                        Selecciona exactamente {{ $solicitud->quantity }} equipo(s) de esta categoría.
+                        Disponibles: {{ $equipos->count() }}.
+                    </p>
                 </div>
                 <span class="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700 ring-1 ring-inset ring-blue-100">
                     Requeridos: {{ $solicitud->quantity }}
@@ -55,7 +59,10 @@
                     @forelse ($equipos as $equipo)
                         <tr>
                             <td class="pl-6">
-                                <input type="checkbox" name="equipos[]" value="{{ $equipo->id }}" class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <input type="checkbox" name="equipos[]" value="{{ $equipo->id }}"
+                                       x-model="seleccionados"
+                                       x-bind:disabled="seleccionados.length >= requeridos && ! seleccionados.includes('{{ $equipo->id }}')"
+                                       class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
                             </td>
                             <td class="font-mono text-xs text-slate-600">{{ $equipo->patrimonial_code }}</td>
                             <td>{{ $equipo->brand }} / {{ $equipo->model }}</td>
@@ -78,7 +85,9 @@
 
             <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-4">
                 <a href="{{ route('admin.solicitudes.index') }}" class="btn btn-ghost">Cancelar</a>
-                <button class="btn btn-primary" type="submit">
+                <button class="btn btn-primary" type="submit"
+                        @disabled($equipos->count() < $solicitud->quantity)
+                        x-bind:disabled="seleccionados.length !== requeridos">
                     <x-ui.icon name="swap" class="h-4 w-4" />
                     Aprobar y asignar
                 </button>

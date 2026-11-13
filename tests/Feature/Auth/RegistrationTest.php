@@ -25,8 +25,8 @@ class RegistrationTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'StrongPass1',
+            'password_confirmation' => 'StrongPass1',
             'office_id' => $oficina->id,
         ]);
 
@@ -45,12 +45,27 @@ class RegistrationTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Sin Oficina',
             'email' => 'sinoficina@institucion.gob.ve',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'StrongPass1',
+            'password_confirmation' => 'StrongPass1',
             'office_id' => $oficina->id,
         ]);
 
         $response->assertSessionHasErrors('office_id');
+        $this->assertGuest();
+    }
+
+    public function test_registration_rejects_names_with_digits_and_weak_passwords(): void
+    {
+        $oficina = Office::factory()->create();
+
+        $this->post('/register', [
+            'name' => 'Usuario 123',
+            'email' => 'nombre-invalido@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'office_id' => $oficina->id,
+        ])->assertSessionHasErrors(['name', 'password']);
+
         $this->assertGuest();
     }
 }

@@ -3,6 +3,9 @@
 
     <x-ui.page-header title="Historial de asignaciones" subtitle="Equipos entregados por solicitud, con su responsable.">
         <a href="{{ route('reportes.asignaciones') }}" class="btn btn-outline">Limpiar filtros</a>
+        <a href="{{ route('reportes.asignaciones.pdf', $filtros) }}" class="btn btn-primary">
+            <x-ui.icon name="file-text" class="h-4 w-4" /> Exportar PDF
+        </a>
     </x-ui.page-header>
 
     <form method="GET" action="{{ route('reportes.asignaciones') }}" class="filter-bar mt-6 md:grid-cols-4">

@@ -3,7 +3,9 @@
 ## Sistema de Gestión de Inventario y Despacho Tecnológico
 
 **Documento de Diseño de Software (Software Design Document)**
-Contrato de diseño del proyecto — fuente principal de verdad para arquitectura, implementación y pruebas.
+Documento de decisiones y diseño del proyecto. Algunas secciones conservan propuestas de arquitectura y planificación que no reflejan el código vigente; para el comportamiento implementado, consulta primero el README y las guías de backend y frontend.
+
+> **Vigencia:** este documento comenzó como una especificación de diseño. Desde su redacción, el sistema evolucionó: la aplicación actual usa Laravel 12, los reportes PDF ya están implementados y el procesamiento se encuentra en los controladores y Form Requests existentes. Las referencias a Actions, Policies, GitFlow y funciones marcadas como pendientes describen propuestas o etapas anteriores, no necesariamente archivos ni procedimientos presentes en el repositorio.
 
 ---
 
@@ -13,13 +15,13 @@ Contrato de diseño del proyecto — fuente principal de verdad para arquitectur
 | --- | --- |
 | Nombre del sistema | SIGEDTEC — Sistema de Gestión de Inventario y Despacho Tecnológico |
 | Versión del documento | 2.1 |
-| Estado | **En revisión — pendiente de aprobación por el equipo/usuario** |
+| Estado | Documento de diseño histórico; consultar la documentación de implementación para el estado actual |
 | Autor | Arquitectura de software — Trayecto III, PNF en Informática |
 | Institución | Universidad Politécnica Territorial |
 | Contexto | Mini Proyecto — curso de Trayecto III (nivel intermedio) |
-| Stack principal | Laravel 11 (o 10) · PHP 8.2+ · PostgreSQL 14+ · Blade + Tailwind CSS · Breeze · PHPUnit |
-| Método de control de versiones | GitFlow (`main`, `develop`, `feature/*`) |
-| Fecha | Octubre 2026 |
+| Stack principal | Laravel 12 · PHP 8.2+ · PostgreSQL · Blade · Tailwind CSS · PHPUnit |
+| Método de control de versiones | Git; rama actual de publicación: `main` |
+| Fecha | Octubre-noviembre 2026 |
 
 ### 1.1 Historial de versiones
 
@@ -31,10 +33,9 @@ Contrato de diseño del proyecto — fuente principal de verdad para arquitectur
 
 ### 1.2 Cómo usar este documento
 
-1. Toda implementación debe poder trazarse a una sección del SDD (§27 contiene la matriz).
-2. Las decisiones marcadas **[Recomendada]** son propuestas por el autor y deben confirmarse antes de programar (lista en §28).
-3. Las decisiones marcadas **[Requiere aprobación]** no deben implementarse sin un "sí" explícito.
-4. Cambiar una decisión implica actualizar este documento **antes** de cambiar el código.
+1. Las secciones de requisitos y arquitectura registran el diseño previsto originalmente; verifica la implementación en el código y en las guías vigentes.
+2. Las decisiones marcadas **[Recomendada]** o **[Requiere aprobación]** pertenecen al proceso de diseño original y no deben interpretarse como una descripción automática del estado actual.
+3. Las decisiones nuevas deben documentarse junto con el código que las implementa.
 
 ---
 
@@ -339,7 +340,7 @@ Responsable de pedir equipos para su oficina.
 | RN‑01 | Todo acceso a funciones privadas exige sesión autenticada; sin sesión → redirección a `/login`. |
 | RN‑02 | Solo existen dos roles: `admin` y `solicitante`. El rol se asigna en servidor, nunca en el formulario. |
 | RN‑03 | Todo usuario tiene exactamente una oficina activa; las solicitudes se originan en la oficina del solicitante. |
-| RN‑04 | El código patrimonial es único, obligatorio e inmutable; un código de un equipo borrado lógicamente no se reutiliza. |
+| RN‑04 | El sistema genera el código patrimonial al guardar (`SIG-AAAA-NNNN`); es único e inmutable, y un código de un equipo borrado lógicamente no se reutiliza. |
 | RN‑05 | El número de serie, cuando exista, es único entre equipos no borrados lógicamente. |
 | RN‑06 | Un equipo solo se elimina lógicamente si su estado es `disponible`; los `asignado` y en `mantenimiento` no se borran. |
 | RN‑07 | Una categoría con equipos no se elimina; se desactiva. Una oficina con usuarios o solicitudes no se elimina; se desactiva. |
@@ -1666,4 +1667,3 @@ Aplicar en **cada** fase con UI (criterio de aceptación CA‑20):
 ---
 
 *Fin del documento. Próximo paso: revisar §28.3 (PD‑01…PD‑09), obtener aprobación y ejecutar la Fase 0/F1 conforme a §25. La implementación no comienza hasta que este SDD esté aprobado.*
-

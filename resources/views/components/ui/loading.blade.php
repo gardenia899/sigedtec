@@ -1,42 +1,30 @@
-{{--
-    Pantalla de carga del sistema.
-    Se muestra al entrar a una página, al enviar un formulario y al abrir un
-    enlace interno. Permanece al menos dos segundos desde que aparece, aunque
-    la página termine de cargar antes, y se retira al cumplirse ese tiempo.
---}}
 <div
     x-data="{
-        visible: true,
-        inicio: Date.now(),
-        ocultar() {
-            const restante = Math.max(0, 2000 - (Date.now() - this.inicio));
-
-            window.setTimeout(() => { this.visible = false; }, restante);
-        },
+        visible: false,
         mostrar() {
-            this.inicio = Date.now();
             this.visible = true;
+            sessionStorage.setItem('sigedtec-loading-start', Date.now().toString());
+        },
+        continuar() {
+            const inicio = Number(sessionStorage.getItem('sigedtec-loading-start'));
+
+            if (! inicio) return;
+
+            this.visible = true;
+            window.setTimeout(() => {
+                this.visible = false;
+                sessionStorage.removeItem('sigedtec-loading-start');
+            }, Math.max(0, 1000 - (Date.now() - inicio)));
         }
     }"
     x-init="
-        document.readyState === 'complete'
-            ? ocultar()
-            : window.addEventListener('load', () => ocultar(), { once: true });
-        document.addEventListener('submit', () => mostrar());
-        document.addEventListener('click', (evento) => {
-            const enlace = evento.target.closest('a[href]');
+        continuar();
+        document.addEventListener('submit', (evento) => {
+            const formulario = evento.target;
 
-            if (! enlace || enlace.target === '_blank' || enlace.hasAttribute('download')) {
-                return;
+            if (formulario instanceof HTMLFormElement && formulario.method.toUpperCase() !== 'GET') {
+                mostrar();
             }
-
-            const destino = new URL(enlace.href, window.location.href);
-
-            if (destino.origin !== window.location.origin || destino.href.includes('#')) {
-                return;
-            }
-
-            mostrar();
         });
     "
     x-show="visible"

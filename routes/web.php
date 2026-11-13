@@ -108,9 +108,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/solicitudes')->name('ad
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])->prefix('reportes')->name('reportes.')->group(function () {
+    Route::get('/inventario/pdf', [ReporteController::class, 'inventarioPdf'])->name('inventario.pdf');
     Route::get('/inventario', [ReporteController::class, 'inventario'])->name('inventario');
+    Route::get('/solicitudes/pdf', [ReporteController::class, 'solicitudesPdf'])->name('solicitudes.pdf');
     Route::get('/solicitudes', [ReporteController::class, 'solicitudes'])->name('solicitudes');
+    Route::get('/asignaciones/pdf', [ReporteController::class, 'asignacionesPdf'])->name('asignaciones.pdf');
     Route::get('/asignaciones', [ReporteController::class, 'asignaciones'])->name('asignaciones');
+    Route::get('/movimientos/pdf', [ReporteController::class, 'movimientosPdf'])->name('movimientos.pdf');
     Route::get('/movimientos', [ReporteController::class, 'movimientos'])->name('movimientos');
 });
 

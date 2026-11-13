@@ -17,7 +17,7 @@ class CategoriaRequest extends FormRequest
         $id = $categoria instanceof Category ? $categoria->id : null;
 
         return [
-            'name' => ['required', 'string', 'max:80', Rule::unique('categories', 'name')->ignore($id)],
+            'name' => ['required', 'string', 'max:80', 'regex:/^[\p{L}\p{M}\s\'-]+$/u', Rule::unique('categories', 'name')->ignore($id)],
             'description' => ['nullable', 'string', 'max:255'],
             'spec_fields' => ['nullable', 'array'],
             'spec_fields.*' => ['string', Rule::in(array_keys(Category::CAMPOS_TECNICOS))],

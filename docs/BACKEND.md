@@ -1,62 +1,57 @@
-# Backend - SIGEDTEC
+# Backend de SIGEDTEC
 
-Este documento tiene como objetivo llevar el control del backend: rutas, controladores, modelos, reglas y lo que falta por poner en funcionamiento.
+Este documento describe el comportamiento actual del servidor. La especificación de diseño y sus decisiones históricas están en [SDD.md](../SDD.md); donde difieran, prevalece la implementación documentada aquí y en el README.
 
-## Estado actual
+## Tecnologías y datos
 
-- Laravel 12.70.2
-- PHP 8.4.22
-- PostgreSQL 5433 (sigedtec)
-- SESSION_DRIVER=database
-- Todas las migraciones están corridas
-- Catálogo de 14 tipos de aparato, cada uno con sus especificaciones técnicas
+- PHP 8.2 o superior y Laravel 12.
+- PostgreSQL como base de datos de la instalación de desarrollo.
+- Eloquent ORM, migraciones y Form Requests para persistencia y validación.
+- PHPUnit, ejecutado con `php artisan test`.
+- Dompdf para generar los reportes PDF.
 
-## Roles
-
-- `admin` - Soporte Técnico
-- `solicitante` - Jefe de Oficina
+La aplicación tiene roles `admin` y `solicitante`. El middleware de rol protege las rutas administrativas y las operaciones comprueban además la pertenencia de las solicitudes. El rol no se acepta como dato confiable del formulario de registro.
 
 ## Módulos
 
-| Módulo | Estado | Comentario |
-| :-- | :--- | :--- |
-| Autenticación (Breeze) | Funcional | Login, registro, logout. El registro fuerza el rol solicitante y pide oficina activa. |
-| Oficinas | Funcional | CRUD completo para admin. Crear, editar, activar/desactivar. |
-| Categorías | Funcional | CRUD completo para admin. Cada categoría define qué especificaciones técnicas se piden al registrar un equipo. |
-| Inventario (Equipos) | Funcional | CRUD, filtros, baja lógica, restauración, cambio manual de estado con bitácora. El formulario muestra solo las especificaciones de la categoría. |
-| Solicitudes | Funcional | Crear, listar propias, ver detalle, cancelar pendiente. |
-| Aprobación/Despacho | Funcional | Bandeja, aprobar con selección de equipos, bloqueo, transacción, rechazar con observación. |
-| Dashboard | Funcional | Panel por rol con contadores reales, recientes y accesos rápidos. |
-| Reportes | Funcional | Inventario, solicitudes, asignaciones, movimientos con filtros. |
-| Usuarios | Funcional | Listado y cambio de rol por parte del admin. |
+| Módulo | Funciones |
+| --- | --- |
+| Autenticación y perfiles | Iniciar y cerrar sesión, registro de solicitantes, recuperación de cuenta y edición del perfil. |
+| Oficinas | Consulta, alta, edición y activación/desactivación. Los códigos se generan en el servidor. |
+| Categorías | Consulta, alta, edición y activación/desactivación; define los campos técnicos de los equipos. |
+| Inventario | Alta y edición, filtros, baja lógica y restauración. Los códigos patrimoniales se generan al guardar. |
+| Solicitudes | Crear solicitudes, consultar las propias, ver su detalle y cancelar las pendientes. |
+| Aprobación y despacho | Revisar solicitudes, seleccionar los equipos disponibles requeridos o rechazar indicando una observación. |
+| Dashboard y notificaciones | Mostrar indicadores por perfil y accesos a solicitudes recientes. |
+| Reportes | Consultar inventario, solicitudes, asignaciones y movimientos con filtros y exportación PDF. |
+| Usuarios | Consultar cuentas y cambiar roles con permisos de administrador. |
 
-## Especificaciones por categoría
+## Reglas relevantes
 
-- Columna `categories.spec_fields` (json) con los campos aplicables: `cpu`, `ram_gb`, `storage_gb`, `storage_type`.
-- `Category::CAMPOS_TECNICOS` define las etiquetas y `camposTecnicos()` devuelve los de cada categoría; sin configuración se asume equipo de cómputo.
-- `EquipoController` anula las especificaciones que no corresponden a la categoría al guardar y al editar, para que no queden datos de otro tipo de aparato.
-- Las categorías se crean y editan con casillas para elegir esos campos; el catálogo inicial lo carga `CategorySeeder`.
+- Los códigos patrimoniales y de oficina se generan en el servidor, no se aceptan como valores editables del formulario.
+- Los campos técnicos guardados para un equipo dependen de su categoría.
+- Un equipo asignado no se cambia a otro estado desde la acción de inventario; la asignación ocurre al procesar una solicitud.
+- Antes de confirmar un despacho, se verifica nuevamente que la solicitud siga pendiente y que los equipos continúen disponibles. Los cambios se guardan en una transacción y quedan relacionados con la solicitud y el historial de estados.
+- Una baja es lógica; los registros históricos no se eliminan de la base.
+- Los reportes PDF aplican los filtros seleccionados en el reporte.
 
-## Rendimiento
+## Datos y migraciones
 
-- Panel y bandeja calculan sus contadores con una consulta agregada por tabla (`GROUP BY status`), no una por estado.
-- Índices: `status_history(created_at)`, `request_items(created_at)`, `equipment(status, category_id)`, `equipment_requests(status, created_at)` y `equipment_requests(user_id, status)`.
-- Los listados piden columnas explícitas y las relaciones cargan solo los campos que usan las vistas.
-- La bandeja de despacho conserva el filtro de estado al paginar (`withQueryString`).
-- El catálogo de categorías se ordena por cantidad de equipos y se limita a las seis que muestra el panel.
+Las migraciones de `database/migrations` definen usuarios, oficinas, categorías, equipos, solicitudes, elementos asignados, bitácora y secuencias de códigos, además de tablas de soporte de Laravel. Las restricciones y relaciones en la base complementan la validación de Laravel.
 
-## Rutas activas ahora mismo
+`DatabaseSeeder` llama a los seeders de oficinas, categorías, usuarios, equipos y solicitudes. Para cargar solamente el catálogo de categorías en una instalación existente:
 
-Revisando con `route:list` hay rutas de auth, dashboard, profile, oficinas (index), etc.
+```powershell
+php artisan db:seed --class=CategorySeeder
+```
 
-## Lo que sigue
+Revisa siempre `.env` antes de migrar o ejecutar seeders. Evita `migrate:fresh` si la base contiene información que deba conservarse.
 
-Todo lo esencial está funcionando. Se puede seguir afinando detalles si se necesitan.
+## Comprobaciones
 
-## Notas
+```powershell
+php artisan test
+vendor/bin/pint --test
+```
 
-- El rol nunca debe venir del formulario.
-- Todo lo que sea asignación debe ir por transacción.
-- La tabla `sessions` debe existir (ya está).
-- Usar `lockForUpdate` cuando se apruebe una solicitud.
-- En otra instalación, después de `migrate` conviene ejecutar `php artisan db:seed --class=CategorySeeder` para tener el catálogo completo de aparatos.
+La suite debe ejecutarse contra la base de pruebas configurada en `phpunit.xml`, nunca contra la base activa con datos institucionales.

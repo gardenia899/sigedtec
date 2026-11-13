@@ -3,6 +3,9 @@
 
     <x-ui.page-header title="Solicitudes por estado" subtitle="Listado de todas las solicitudes registradas en el sistema.">
         <a href="{{ route('reportes.solicitudes') }}" class="btn btn-outline">Limpiar filtros</a>
+        <a href="{{ route('reportes.solicitudes.pdf', $filtros) }}" class="btn btn-primary">
+            <x-ui.icon name="file-text" class="h-4 w-4" /> Exportar PDF
+        </a>
     </x-ui.page-header>
 
     <form method="GET" action="{{ route('reportes.solicitudes') }}" class="filter-bar mt-6 md:grid-cols-3">

@@ -19,7 +19,7 @@
 
         <div>
             <x-input-label for="name" value="Nombre completo" />
-            <x-text-input id="name" name="name" type="text" class="field mt-1.5" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+            <x-text-input id="name" name="name" type="text" class="field mt-1.5" :value="old('name', $user->name)" required autofocus autocomplete="name" pattern="[\p{L}\p{M}\s'-]+" title="Escribe solo letras, espacios, apóstrofes o guiones." />
             <x-input-error class="field-error" :messages="$errors->get('name')" />
         </div>
 

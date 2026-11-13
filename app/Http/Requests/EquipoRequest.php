@@ -9,9 +9,9 @@ use Illuminate\Validation\Rule;
 class EquipoRequest extends FormRequest
 {
     /**
-     * Altas y ediciones comparten estas reglas. En la edición el código patrimonial
-     * y el número de serie se ignoran a sí mismos, y la categoría puede estar
-     * inactiva para no bloquear equipos que ya existen.
+     * El código patrimonial se genera en el servidor al guardar y no se puede
+     * editar. En la edición la serie se ignora a sí misma y una categoría inactiva
+     * sigue siendo válida para no bloquear equipos que ya existen.
      *
      * @return array<string, array<int, mixed>>
      */
@@ -22,12 +22,6 @@ class EquipoRequest extends FormRequest
         $esAlta = $id === null;
 
         $reglas = [
-            'patrimonial_code' => [
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('equipment', 'patrimonial_code')->ignore($id),
-            ],
             'category_id' => [
                 'required',
                 'integer',
@@ -44,17 +38,19 @@ class EquipoRequest extends FormRequest
                 Rule::unique('equipment', 'serial_number')->ignore($id)->whereNull('deleted_at'),
             ],
             'cpu' => ['nullable', 'string', 'max:120'],
-            'ram_gb' => ['nullable', 'integer', 'min:1'],
-            'storage_gb' => ['nullable', 'integer', 'min:1'],
+            'ram_gb' => ['nullable', 'integer', 'min:1', 'max:65535'],
+            'storage_gb' => ['nullable', 'integer', 'min:1', 'max:65535'],
             'storage_type' => ['nullable', 'string', Rule::in(['hdd', 'ssd', 'nvme', 'emmc'])],
             'acquisition_date' => ['nullable', 'date'],
             'observations' => ['nullable', 'string'],
         ];
 
         if ($esAlta) {
-            // El estado solo se define al crear; después se cambia desde el listado,
-            // que es el único camino que deja historial del movimiento.
-            $reglas['status'] = ['required', Rule::in(['disponible', 'asignado', 'mantenimiento'])];
+            $reglas['status'] = ['required', Rule::in(['disponible', 'mantenimiento'])];
+        } elseif ($equipo->status === 'asignado') {
+            $reglas['status'] = ['prohibited'];
+        } else {
+            $reglas['status'] = ['sometimes', 'required', Rule::in(['disponible', 'mantenimiento'])];
         }
 
         return $reglas;
@@ -66,7 +62,6 @@ class EquipoRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'patrimonial_code.unique' => 'Este código patrimonial ya está registrado.',
             'serial_number.unique' => 'Este número de serie ya está registrado.',
             'category_id.required' => 'Debes seleccionar una categoría.',
         ];

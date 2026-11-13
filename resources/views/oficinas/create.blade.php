@@ -22,13 +22,13 @@
             <div class="space-y-5 p-6">
                 <div>
                     <x-input-label for="code" value="Código" />
-                    <x-text-input id="code" name="code" type="text" class="field mt-1.5" :value="old('code')" required maxlength="10" />
-                    <x-input-error :messages="$errors->get('code')" class="field-error" />
+                    <x-text-input id="code" type="text" class="field mt-1.5 font-mono" :value="$codigoOficina" readonly aria-readonly="true" />
+                    <p class="mt-1 text-xs text-slate-500">El código se asignará automáticamente al guardar la oficina.</p>
                 </div>
 
                 <div>
                     <x-input-label for="name" value="Nombre" />
-                    <x-text-input id="name" name="name" type="text" class="field mt-1.5" :value="old('name')" required maxlength="120" />
+                    <x-text-input id="name" name="name" type="text" class="field mt-1.5" :value="old('name')" required maxlength="120" pattern="[\p{L}\p{M}\s'-]+" title="Escribe solo letras, espacios, apóstrofes o guiones." />
                     <x-input-error :messages="$errors->get('name')" class="field-error" />
                 </div>
 

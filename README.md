@@ -1,63 +1,103 @@
 # SIGEDTEC
 
+SIGEDTEC es una aplicación web para llevar el inventario de equipos tecnológicos y organizar las solicitudes y entregas de una institución. Reúne en un mismo lugar los catálogos, el seguimiento de cada solicitud, el historial de movimientos y los reportes.
+
+El sistema está desarrollado en español. Lo utiliza el equipo de Soporte Técnico para administrar el inventario y procesar solicitudes, y los jefes de oficina para pedir equipos y consultar el estado de sus solicitudes.
+
 **Desarrollado por:** Yocelianna Rodriguez
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Qué permite hacer
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+- Registrar oficinas, categorías y equipos; los códigos de oficina y patrimoniales se generan desde el sistema.
+- Definir qué características técnicas se solicitan según el tipo de equipo.
+- Crear solicitudes indicando categoría, cantidad y justificación.
+- Revisar, aprobar o rechazar solicitudes. Al aprobar, el administrador selecciona equipos disponibles concretos.
+- Mantener una bitácora de cambios de estado y un historial de asignaciones.
+- Consultar reportes de inventario, solicitudes, asignaciones y movimientos, y descargarlos en PDF.
+- Trabajar con dos perfiles: `admin` (Soporte Técnico) y `solicitante` (Jefe de Oficina).
 
-## About Laravel
+## Tecnologías
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Parte | Tecnología |
+| --- | --- |
+| Servidor | PHP 8.2 o superior y Laravel 12 |
+| Base de datos | PostgreSQL |
+| Vistas | Blade y HTML |
+| Estilos e interacción | Tailwind CSS, JavaScript y Alpine.js |
+| Recursos del frontend | Vite y npm |
+| Reportes PDF | Dompdf |
+| Pruebas | PHPUnit mediante Artisan |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Es una aplicación monolítica renderizada por Laravel; los flujos principales no dependen de una SPA ni de una API independiente. En el entorno de desarrollo usado para verificar el proyecto se ejecutaron PHP 8.4.22, Laravel 12.70.2, PostgreSQL 18, Node.js 24 y Vite 7. Las versiones compatibles se definen en `composer.json` y `package.json`.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Preparar el entorno local
 
-## Learning Laravel
+Se necesita PHP con las extensiones requeridas por Laravel y PostgreSQL, Composer, Node.js/npm y una base de datos PostgreSQL disponible. En PowerShell, desde la carpeta del repositorio:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```powershell
+composer install
+Copy-Item .env.example .env
+php artisan key:generate
+npm install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Antes de migrar, configura `.env` con los datos de una base PostgreSQL vacía para este proyecto. Como mínimo, revisa `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD`; utiliza `pgsql` como conexión. No copies credenciales reales a Git.
 
-## Laravel Sponsors
+Después de configurar la conexión:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```powershell
+php artisan migrate
+npm run build
+php artisan serve
+```
 
-### Premium Partners
+Abre la dirección que indique Artisan, normalmente `http://127.0.0.1:8000`. Para trabajar con Vite en modo desarrollo, usa `npm run dev` en otra terminal. El catálogo inicial de categorías se puede cargar con `php artisan db:seed --class=CategorySeeder`.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Las migraciones modifican la base de datos seleccionada en `.env`; comprueba la conexión y el nombre de la base antes de ejecutarlas. No uses `migrate:fresh` en una base con datos que deban conservarse. Las pruebas utilizan la configuración de base de datos definida en `phpunit.xml`; confirma que esa base sea de pruebas antes de ejecutar la suite.
 
-## Contributing
+## Perfiles y recorrido de trabajo
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. Soporte Técnico configura oficinas y categorías, y registra los equipos disponibles o en mantenimiento.
+2. El jefe de oficina crea una solicitud. La oficina asociada a su cuenta se incluye automáticamente.
+3. Soporte Técnico revisa la petición. Para aprobarla, selecciona equipos disponibles de la categoría solicitada; también puede rechazarla con una observación.
+4. Al aprobar, el sistema vuelve a verificar la disponibilidad y registra la asignación en una transacción.
+5. El solicitante consulta la decisión y los equipos asignados. El administrador puede revisar movimientos y exportar reportes.
 
-## Code of Conduct
+El acceso a las pantallas y las operaciones se valida en el servidor según el perfil; no depende únicamente de ocultar opciones en el menú.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Organización de los datos
 
-## Security Vulnerabilities
+PostgreSQL almacena usuarios y oficinas, categorías, equipos, solicitudes, equipos asignados a cada solicitud, cambios de estado y secuencias para generar códigos. Las migraciones en `database/migrations` definen la estructura y restricciones. Los equipos dados de baja se conservan mediante borrado lógico.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+El archivo de configuración local `.env` no se publica. Los respaldos de la base de datos pueden contener información personal y hashes de contraseñas: deben manejarse de forma privada y no subirse a este repositorio.
 
-## License
+## Pruebas y compilación
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```powershell
+php artisan test
+npm run build
+```
+
+Para comprobar el formato de PHP con Laravel Pint:
+
+```powershell
+vendor/bin/pint --test
+```
+
+## Control de versiones y cambios
+
+El repositorio remoto es [gardenia899/sigedtec](https://github.com/gardenia899/sigedtec). La rama de trabajo y publicación actual es `main`. El historial registra los cambios por medio de Git; no se presupone una versión de producto etiquetada ni un esquema de ramas GitFlow.
+
+Para un cambio pequeño, se puede trabajar en una rama y abrir una revisión antes de integrarlo. Conviene usar mensajes breves que indiquen el propósito, por ejemplo `feat: agregar exportación de reportes` o `fix: validar disponibilidad al asignar equipos`. Antes de publicar, revisar las pruebas, el diff y que no se incluyan `.env`, respaldos ni archivos temporales. El registro de avances está en [docs/ORDEN_COMMITS.md](docs/ORDEN_COMMITS.md).
+
+## Documentación
+
+- [Guía técnica y de uso](docs/GUIA_TECNICA_Y_USO_SIGEDTEC.md): tecnologías, perfiles, vistas y acciones, flujo de trabajo y notas sobre el respaldo local.
+- [Backend](docs/BACKEND.md): módulos del servidor, validaciones y persistencia.
+- [Frontend](docs/FRONTEND.md): vistas, navegación y componentes de interfaz.
+- [Diseño del sistema (SDD)](SDD.md): decisiones y especificaciones de diseño; algunas secciones describen el diseño previsto y no necesariamente la implementación actual. Para el estado vigente, consulta primero este README y las guías de backend y frontend.
+- [Historial de commits](docs/ORDEN_COMMITS.md): seguimiento de cambios publicados.
+
+## Licencia
+
+El proyecto no declara una licencia de distribución propia. La licencia MIT de Laravel no determina por sí sola la licencia de SIGEDTEC.

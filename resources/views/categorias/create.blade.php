@@ -22,7 +22,7 @@
             <div class="space-y-5 p-6">
                 <div>
                     <x-input-label for="name" value="Nombre" />
-                    <x-text-input id="name" name="name" type="text" class="field mt-1.5" :value="old('name')" required maxlength="80" />
+                    <x-text-input id="name" name="name" type="text" class="field mt-1.5" :value="old('name')" required maxlength="80" pattern="[\p{L}\p{M}\s'-]+" title="Escribe solo letras, espacios, apóstrofes o guiones." />
                     <x-input-error :messages="$errors->get('name')" class="field-error" />
                 </div>
 

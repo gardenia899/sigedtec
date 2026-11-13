@@ -25,11 +25,14 @@ class AppServiceProvider extends ServiceProvider
         // agregada, ejecutada únicamente para el administrador.
         View::composer('layouts.app', function ($view) {
             $user = auth()->user();
+            $administrador = $user && $user->isAdmin();
 
-            $view->with(
-                'navPendientes',
-                $user && $user->isAdmin() ? EquipmentRequest::pendientes()->count() : 0
-            );
+            $view->with([
+                'navPendientes' => $administrador ? EquipmentRequest::pendientes()->count() : 0,
+                'navNotificaciones' => $administrador
+                    ? EquipmentRequest::with('category:id,name')->pendientes()->latest()->limit(5)->get()
+                    : EquipmentRequest::with('category:id,name')->where('user_id', $user?->id)->latest()->limit(5)->get(),
+            ]);
         });
     }
 }
