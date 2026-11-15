@@ -41,7 +41,7 @@ php artisan key:generate
 npm install
 ```
 
-Antes de migrar, configura `.env` con los datos de una base PostgreSQL vacía para este proyecto. Como mínimo, revisa `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD`; utiliza `pgsql` como conexión. No copies credenciales reales a Git.
+Antes de migrar, crea una base de datos vacía (por ejemplo, `sigedtec`) en PostgreSQL desde pgAdmin 4 y configura `.env` con sus datos. Las migraciones crean las tablas, pero no la base de datos. Como mínimo, revisa `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD`; utiliza `pgsql` como conexión. El puerto PostgreSQL habitual es `5432`, pero usa el puerto configurado en tu servidor. No copies credenciales reales a Git.
 
 Después de configurar la conexión:
 
