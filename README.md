@@ -32,7 +32,7 @@ Es una aplicación monolítica renderizada por Laravel; los flujos principales n
 
 ## Preparar el entorno local
 
-Se necesita PHP con las extensiones requeridas por Laravel y PostgreSQL, Composer, Node.js/npm y una base de datos PostgreSQL disponible. En PowerShell, desde la carpeta del repositorio:
+En cada PC se necesita PHP 8.2 o superior con las extensiones requeridas por Laravel y `pdo_pgsql` habilitada para el PHP de la terminal, Composer, Node.js/npm y un servidor PostgreSQL instalado y en ejecución. pgAdmin 4 sirve para administrar el servidor, pero no lo instala ni lo reemplaza. El puerto PostgreSQL habitual es `5432`; se debe usar el puerto configurado en ese PC. En PowerShell, desde la carpeta del proyecto:
 
 ```powershell
 composer install
@@ -41,11 +41,12 @@ php artisan key:generate
 npm install
 ```
 
-Antes de migrar, crea una base de datos vacía (por ejemplo, `sigedtec`) en PostgreSQL desde pgAdmin 4 y configura `.env` con sus datos. Las migraciones crean las tablas, pero no la base de datos. Como mínimo, revisa `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD`; utiliza `pgsql` como conexión. El puerto PostgreSQL habitual es `5432`, pero usa el puerto configurado en tu servidor. No copies credenciales reales a Git.
+En pgAdmin 4, conéctate al servidor PostgreSQL de ese PC y crea una base de datos vacía llamada `sigedtec`. Edita `.env` y configura `DB_CONNECTION=pgsql`, `DB_HOST=127.0.0.1`, `DB_PORT` (el puerto del servidor, normalmente `5432`), `DB_DATABASE=sigedtec`, `DB_USERNAME` y `DB_PASSWORD` (las credenciales de PostgreSQL de ese PC). No copies el `.env` ni credenciales reales al repositorio o al pendrive: cada instalación debe usar sus propias credenciales. Las migraciones crean las tablas dentro de la base existente; no crean la base de datos.
 
 Después de configurar la conexión:
 
 ```powershell
+php artisan config:clear
 php artisan migrate
 npm run build
 php artisan serve
