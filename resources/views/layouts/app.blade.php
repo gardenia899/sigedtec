@@ -23,6 +23,7 @@
             ['tipo' => 'enlace', 'etiqueta' => 'Inicio', 'icono' => 'home', 'ruta' => 'dashboard', 'activo' => $activo('dashboard')],
             ['tipo' => 'enlace', 'etiqueta' => 'Inventario', 'icono' => 'box', 'ruta' => 'equipos.index', 'activo' => $activo('equipos.*')],
             ['tipo' => 'enlace', 'etiqueta' => 'Solicitudes', 'icono' => 'clipboard', 'ruta' => 'admin.solicitudes.index', 'activo' => $activo('admin.solicitudes.*')],
+            ['tipo' => 'enlace', 'etiqueta' => 'Devoluciones', 'icono' => 'swap', 'ruta' => 'admin.devoluciones.index', 'activo' => $activo('admin.devoluciones.*')],
             ['tipo' => 'enlace', 'etiqueta' => 'Asignaciones', 'icono' => 'swap', 'ruta' => 'reportes.asignaciones', 'activo' => $activo('reportes.asignaciones')],
             ['tipo' => 'grupo', 'etiqueta' => 'Reportes', 'icono' => 'chart', 'abierto' => $activo('reportes.inventario', 'reportes.solicitudes', 'reportes.movimientos'), 'hijos' => [
                 ['etiqueta' => 'Reporte de inventario', 'ruta' => 'reportes.inventario'],

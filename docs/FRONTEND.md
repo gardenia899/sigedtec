@@ -15,6 +15,7 @@ La interfaz está escrita en español con vistas Blade, Tailwind CSS y component
 | `equipos/index.blade.php` y `equipos/edit.blade.php` | Inventario con filtros, acciones de estado y edición. El alta se presenta en un modal desde el listado. |
 | `solicitudes/` | Listado propio, creación y detalle de solicitudes. |
 | `despacho/` | Bandeja del administrador, selección de equipos para aprobar o formulario de rechazo. |
+| `devoluciones/` | Bandeja administrativa para revisar y confirmar devoluciones de equipos asignados. |
 | `reportes/` | Cuatro reportes web y plantilla compartida para exportación PDF. |
 | `usuarios/` | Consulta y cambio de rol por parte del administrador. |
 | `profile/` | Edición de datos de perfil y cuenta. |
@@ -24,6 +25,7 @@ La interfaz está escrita en español con vistas Blade, Tailwind CSS y component
 - **Inventario:** filtrar y limpiar filtros; abrir el formulario modal de alta; editar; dar de baja un equipo permitido o restaurarlo desde la vista de bajas. El código patrimonial se muestra, pero no se edita.
 - **Solicitudes:** crear, consultar el detalle y cancelar una solicitud todavía pendiente. El solicitante solo ve sus propias solicitudes.
 - **Bandeja de administración:** filtrar por estado, consultar el detalle, aprobar con selección de los equipos disponibles que correspondan o rechazar con una observación.
+- **Devoluciones:** el solicitante puede pedir la devolución desde el detalle de una solicitud aprobada. Soporte Técnico revisa el equipo y confirma si vuelve disponible o requiere mantenimiento.
 - **Catálogos:** crear y editar oficinas y categorías, activar o desactivar registros. Los códigos de oficina son generados automáticamente.
 - **Reportes:** filtrar, limpiar filtros, paginar y descargar en PDF los resultados filtrados.
 - **Campana:** consultar solicitudes recientes del perfil; sus enlaces llevan al detalle o al procesamiento correspondiente.

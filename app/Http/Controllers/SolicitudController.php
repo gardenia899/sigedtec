@@ -36,7 +36,7 @@ class SolicitudController extends Controller
         $data = $request->validated();
 
         $categoria = Category::find($data['category_id']);
-        if (!$categoria || !$categoria->is_active) {
+        if (! $categoria || ! $categoria->is_active) {
             return back()->withInput()->with('error', 'La categoría seleccionada no está activa.');
         }
 
@@ -56,7 +56,7 @@ class SolicitudController extends Controller
     {
         $user = $request->user();
 
-        if ($solicitud->user_id !== $user->id && !$user->isAdmin()) {
+        if ($solicitud->user_id !== $user->id && ! $user->isAdmin()) {
             abort(404);
         }
 
@@ -65,7 +65,6 @@ class SolicitudController extends Controller
             'office:id,name',
             'user:id,name',
             'procesadaPor:id,name',
-            'items:id,request_id,equipment_id',
             'items.equipment:id,patrimonial_code,brand,model,serial_number',
         ]);
 

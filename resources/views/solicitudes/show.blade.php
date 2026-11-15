@@ -11,6 +11,20 @@
         </a>
     </x-ui.page-header>
 
+    @if (session('success'))
+        <x-ui.alert type="success" class="mt-4">{{ session('success') }}</x-ui.alert>
+    @endif
+    @if (session('error'))
+        <x-ui.alert type="danger" class="mt-4">{{ session('error') }}</x-ui.alert>
+    @endif
+    @if ($errors->any())
+        <x-ui.alert type="danger" class="mt-4">
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </x-ui.alert>
+    @endif
+
     <div class="mt-6 grid gap-5 lg:grid-cols-2">
         <div class="panel">
             <div class="panel-head">
@@ -71,6 +85,8 @@
                         <th class="pl-6">Código patrimonial</th>
                         <th>Marca / Modelo</th>
                         <th class="pr-6">Serie</th>
+                        <th>Devolución</th>
+                        <th class="pr-6 text-right">Acción</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -79,6 +95,30 @@
                             <td class="pl-6 font-mono text-xs text-slate-600">{{ $item->equipment->patrimonial_code }}</td>
                             <td>{{ $item->equipment->brand }} / {{ $item->equipment->model }}</td>
                             <td class="pr-6 text-slate-600">{{ $item->equipment->serial_number ?? '—' }}</td>
+                            <td>
+                                @if ($item->returned_at)
+                                    Devuelto: {{ $item->return_condition === 'operativo' ? 'Operativo' : 'Requiere mantenimiento' }}
+                                    <span class="block text-xs text-slate-500">{{ $item->returned_at->format('d/m/Y H:i') }}</span>
+                                @elseif ($item->return_requested_at)
+                                    <x-ui.badge type="warning" label="Devolución pendiente de revisión" />
+                                    @if ($item->return_request_observations)
+                                        <span class="mt-1 block text-xs text-slate-500">{{ $item->return_request_observations }}</span>
+                                    @endif
+                                @else
+                                    Asignado
+                                @endif
+                            </td>
+                            <td class="pr-6 text-right">
+                                @if (!auth()->user()->isAdmin() && !$item->returned_at && !$item->return_requested_at)
+                                    <form method="POST" action="{{ route('solicitudes.equipos.devolucion', [$solicitud, $item]) }}">
+                                        @csrf
+                                        <input type="text" name="observations" maxlength="2000"
+                                               placeholder="Observación (opcional)" aria-label="Observación de devolución"
+                                               class="field mb-2 w-52">
+                                        <button class="link-action">Solicitar devolución</button>
+                                    </form>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>

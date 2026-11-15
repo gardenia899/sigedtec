@@ -22,6 +22,7 @@ La aplicación tiene roles `admin` y `solicitante`. El middleware de rol protege
 | Inventario | Alta y edición, filtros, baja lógica y restauración. Los códigos patrimoniales se generan al guardar. |
 | Solicitudes | Crear solicitudes, consultar las propias, ver su detalle y cancelar las pendientes. |
 | Aprobación y despacho | Revisar solicitudes, seleccionar los equipos disponibles requeridos o rechazar indicando una observación. |
+| Devoluciones | El solicitante pide devolver un equipo asignado; Soporte Técnico confirma su condición, cierra la asignación y lo libera como disponible o lo envía a mantenimiento. |
 | Dashboard y notificaciones | Mostrar indicadores por perfil y accesos a solicitudes recientes. |
 | Reportes | Consultar inventario, solicitudes, asignaciones y movimientos con filtros y exportación PDF. |
 | Usuarios | Consultar cuentas y cambiar roles con permisos de administrador. |
@@ -32,6 +33,7 @@ La aplicación tiene roles `admin` y `solicitante`. El middleware de rol protege
 - Los campos técnicos guardados para un equipo dependen de su categoría.
 - Un equipo asignado no se cambia a otro estado desde la acción de inventario; la asignación ocurre al procesar una solicitud.
 - Antes de confirmar un despacho, se verifica nuevamente que la solicitud siga pendiente y que los equipos continúen disponibles. Los cambios se guardan en una transacción y quedan relacionados con la solicitud y el historial de estados.
+- Una solicitud de devolución no cambia por sí sola el estado del equipo. Un administrador confirma la condición del equipo; el cierre de la asignación, actualización del estado y bitácora se guardan juntos en una transacción.
 - Una baja es lógica; los registros históricos no se eliminan de la base.
 - Los reportes PDF aplican los filtros seleccionados en el reporte.
 

@@ -12,6 +12,7 @@ El sistema está desarrollado en español. Lo utiliza el equipo de Soporte Técn
 - Definir qué características técnicas se solicitan según el tipo de equipo.
 - Crear solicitudes indicando categoría, cantidad y justificación.
 - Revisar, aprobar o rechazar solicitudes. Al aprobar, el administrador selecciona equipos disponibles concretos.
+- Solicitar la devolución de equipos asignados y permitir que Soporte Técnico confirme su estado antes de liberarlos.
 - Mantener una bitácora de cambios de estado y un historial de asignaciones.
 - Consultar reportes de inventario, solicitudes, asignaciones y movimientos, y descargarlos en PDF.
 - Trabajar con dos perfiles: `admin` (Soporte Técnico) y `solicitante` (Jefe de Oficina).

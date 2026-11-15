@@ -25,6 +25,9 @@ class RequestItem extends Model
         'status_before',
         'status_after',
         'returned_at',
+        'return_requested_at',
+        'return_requested_by',
+        'return_request_observations',
         'return_condition',
         'return_observations',
     ];
@@ -33,6 +36,7 @@ class RequestItem extends Model
     {
         return [
             'returned_at' => 'datetime',
+            'return_requested_at' => 'datetime',
         ];
     }
 
@@ -50,6 +54,11 @@ class RequestItem extends Model
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');
+    }
+
+    public function returnRequestedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'return_requested_by');
     }
 
     /** Asignaciones aún vigentes (sin devolución). */

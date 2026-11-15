@@ -1,11 +1,11 @@
 # Guía técnica y de uso de SIGEDTEC
 
 **Sistema de Gestión de Inventario y Despacho Tecnológico**
-**Fecha de revisión:** 13 de noviembre de 2026
+**Fecha de revisión:** 15 de noviembre de 2026
 
 ## 1. ¿Para qué sirve?
 
-SIGEDTEC centraliza el inventario de bienes informáticos de una institución y el proceso para solicitarlos, aprobar su entrega y dejar constancia de los equipos asignados. También administra los catálogos de oficinas y categorías, registra cambios en una bitácora y ofrece reportes descargables en PDF.
+SIGEDTEC centraliza el inventario de bienes informáticos de una institución y el proceso para solicitarlos, aprobar su entrega, gestionar devoluciones y dejar constancia de los equipos asignados. También administra los catálogos de oficinas y categorías, registra cambios en una bitácora y ofrece reportes descargables en PDF.
 
 Su objetivo principal es que el inventario y cada decisión de asignación queden organizados, consultables y vinculados con el usuario responsable. No sustituye políticas institucionales de autorización ni es un sistema contable.
 
@@ -32,11 +32,11 @@ El idioma visible para las personas usuarias es español. La zona horaria config
 
 ### Administrador (Soporte Técnico)
 
-Puede administrar oficinas y categorías, registrar y editar equipos, revisar solicitudes, escoger los equipos específicos que se despacharán, consultar los reportes y cambiar roles de otros usuarios. No puede cambiar su propio rol desde la gestión de usuarios.
+Puede administrar oficinas y categorías, registrar y editar equipos, revisar solicitudes, escoger los equipos específicos que se despacharán, confirmar las devoluciones recibidas, consultar los reportes y cambiar roles de otros usuarios. No puede cambiar su propio rol desde la gestión de usuarios.
 
 ### Solicitante (Jefe de Oficina)
 
-Puede crear solicitudes para la oficina asociada a su cuenta, consultar sus propias solicitudes, abrir su detalle y cancelar una solicitud mientras siga pendiente. No puede consultar ni procesar solicitudes pertenecientes a otros usuarios.
+Puede crear solicitudes para la oficina asociada a su cuenta, consultar sus propias solicitudes, abrir su detalle, solicitar la devolución de equipos asignados y cancelar una solicitud mientras siga pendiente. No puede consultar ni procesar solicitudes pertenecientes a otros usuarios.
 
 El servidor comprueba los permisos y la propiedad de los datos; ocultar un botón en la interfaz no es el mecanismo de autorización.
 
@@ -58,6 +58,7 @@ El servidor comprueba los permisos y la propiedad de los datos; ocultar un botó
 - **Nuevo Equipo:** abre el formulario de alta en el inventario.
 - **Ver Inventario:** abre el listado.
 - **Solicitudes:** lleva a la bandeja para aprobar o rechazar.
+- **Devoluciones:** abre las solicitudes de devolución pendientes de revisión.
 - **Reportes:** abre el reporte de inventario.
 - **Historial de asignaciones / Gestión de solicitudes / Catálogos institucionales:** atajos a esos módulos.
 - **Campana:** abre solicitudes pendientes recientes; cada elemento lleva al procesamiento de la solicitud. **Ver todas las solicitudes** abre la bandeja completa.
@@ -86,6 +87,7 @@ El servidor comprueba los permisos y la propiedad de los datos; ocultar un botó
 - **Enviar solicitud:** registra la petición con la oficina vinculada al usuario.
 - **Cancelar:** vuelve al listado sin guardar.
 - **Ver:** abre el detalle, estado, observación del administrador y, si fue aprobada, los equipos asignados.
+- **Solicitar devolución:** desde el detalle de una solicitud aprobada, pide la devolución de un equipo. El equipo no se libera hasta que Soporte Técnico la confirme.
 - **Cancelar solicitud** en el listado solo está disponible mientras el estado sea pendiente.
 
 ### Bandeja de solicitudes del administrador
@@ -96,6 +98,13 @@ El servidor comprueba los permisos y la propiedad de los datos; ocultar un botó
 - **Aprobar y asignar:** registra la decisión, asigna los equipos seleccionados y crea los registros de asignación y bitácora dentro de una transacción.
 - **Rechazar:** solicita una observación y registra el motivo, responsable y fecha.
 - Una solicitud ya procesada no puede aprobarse o rechazarse por segunda vez.
+
+### Devoluciones de equipos
+
+- **Solicitar devolución:** el solicitante indica opcionalmente una observación desde el detalle de su propia solicitud aprobada.
+- **Revisión:** Soporte Técnico abre **Devoluciones**, revisa el equipo recibido y confirma si está operativo o requiere mantenimiento.
+- **Confirmar devolución:** si está operativo, el equipo queda disponible; si requiere mantenimiento, pasa a mantenimiento. Ambas decisiones cierran la asignación y se registran en la bitácora.
+- Mientras está pendiente, el equipo sigue asignado y no puede despacharse a otra solicitud.
 
 ### Catálogos
 
@@ -126,7 +135,9 @@ Todos los reportes tienen **Filtrar**, **Limpiar filtros**, paginación y **Expo
 4. El administrador revisa la bandeja y, para aprobar, selecciona equipos disponibles de esa categoría en la cantidad solicitada. También puede rechazar indicando una observación.
 5. Si aprueba, el sistema confirma nuevamente que cada equipo siga disponible, marca los equipos como asignados y registra la relación con la solicitud y el administrador en una única transacción.
 6. La persona solicitante consulta el resultado y los códigos de los equipos asignados desde el detalle de su solicitud.
-7. El administrador consulta los reportes y la bitácora para seguimiento.
+7. El solicitante pide la devolución desde el detalle de la solicitud aprobada. El equipo continúa asignado hasta que Soporte Técnico revise su condición y confirme la devolución.
+8. Soporte Técnico confirma si el equipo está operativo (vuelve a disponible) o requiere mantenimiento. La asignación se cierra y el cambio queda en la bitácora.
+9. El administrador consulta los reportes y la bitácora para seguimiento.
 
 ## 6. Datos principales
 

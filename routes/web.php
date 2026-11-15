@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DespachoController;
+use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\OficinaController;
 use App\Http\Controllers\ProfileController;
@@ -100,6 +101,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/solicitudes')->name('ad
     Route::post('/{solicitud}/aprobar', [DespachoController::class, 'aprobar'])->name('aprobar');
     Route::get('/{solicitud}/rechazar', [DespachoController::class, 'formRechazar'])->name('formRechazar');
     Route::post('/{solicitud}/rechazar', [DespachoController::class, 'rechazar'])->name('rechazar');
+});
+
+Route::middleware(['auth', 'role:solicitante'])->prefix('solicitudes/{solicitud}/equipos/{item}')->name('solicitudes.equipos.')->group(function () {
+    Route::post('/devolucion', [DevolucionController::class, 'solicitar'])->name('devolucion');
+});
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin/devoluciones')->name('admin.devoluciones.')->group(function () {
+    Route::get('/', [DevolucionController::class, 'index'])->name('index');
+    Route::post('/{item}/confirmar', [DevolucionController::class, 'confirmar'])->name('confirmar');
 });
 
 /*
