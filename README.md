@@ -93,6 +93,7 @@ Para un cambio pequeño, se puede trabajar en una rama y abrir una revisión ant
 
 ## Documentación
 
+- [Manual completo de instalación y uso (Word)](docs/MANUAL_INSTALACION_Y_USO_SIGEDTEC.docx): preparación de Windows y PostgreSQL, migraciones, creación del administrador, módulos, respaldo y solución de problemas.
 - [Guía técnica y de uso](docs/GUIA_TECNICA_Y_USO_SIGEDTEC.md): tecnologías, perfiles, vistas y acciones, flujo de trabajo y notas sobre el respaldo local.
 - [Backend](docs/BACKEND.md): módulos del servidor, validaciones y persistencia.
 - [Frontend](docs/FRONTEND.md): vistas, navegación y componentes de interfaz.
